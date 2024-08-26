@@ -25,6 +25,9 @@ jobs:
         with:
           node-version: '20'  # Specify the Node.js version here
 
+      - name: Set working directory
+        run: cd ./industry-app  # Ensure this path leads to your package.json
+
       - name: Install dependencies
         run: npm install
 
