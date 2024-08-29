@@ -1,0 +1,82 @@
+DROP TABLE IF EXISTS [Information];
+DROP TABLE IF EXISTS [Image];
+DROP TABLE IF EXISTS [Turtle];
+DROP TABLE IF EXISTS [Category];
+DROP TABLE IF EXISTS [Species];
+DROP TABLE IF EXISTS [User];
+
+
+CREATE TABLE [User] (
+	userID BIGINT IDENTITY(1,1) PRIMARY KEY,
+	username VARCHAR(100),
+	userPassword VARCHAR(50),
+	organisation VARCHAR(100),
+	firstName VARCHAR(50),
+	lastName VARCHAR(50),
+	mobile VARCHAR(20)
+);
+
+CREATE TABLE [Species] (
+	speciesID BIGINT IDENTITY(1,1) PRIMARY KEY,
+	userID BIGINT NOT NULL,
+	commonName VARCHAR(100),
+	scientificName VARCHAR(200),
+	description VARCHAR(MAX),
+	created DATE DEFAULT GETDATE(),
+	FOREIGN KEY(userID) REFERENCES [User](userID)
+);
+
+CREATE TABLE [Category] (
+	categoryID BIGINT IDENTITY(1,1) PRIMARY KEY,
+	userID BIGINT NOT NULL,
+	category VARCHAR(50),
+	description VARCHAR(MAX),
+	unit VARCHAR(50) NOT NULL,
+	created DATE DEFAULT GETDATE(),
+	FOREIGN KEY(userID) REFERENCES [User](userID)
+);
+
+CREATE TABLE [Turtle] (
+	turtleID BIGINT IDENTITY(1,1) PRIMARY KEY,
+	speciesID BIGINT NOT NULL,
+	secondaryTurtleID VARCHAR(20),
+	name VARCHAR(35),
+	gender VARCHAR(25),
+	flipperTagged BIT,
+	dateOfBirth DATE,
+	FOREIGN KEY (speciesID) REFERENCES [Species](speciesID)
+);
+
+CREATE TABLE [Image] (
+	imageID BIGINT IDENTITY(1,1) PRIMARY KEY,
+	userID BIGINT NOT NULL,
+	turtleID BIGINT NOT NULL,
+	secondaryImageID VARCHAR(20),
+	image VARBINARY(MAX),
+	matchConfidence INT,
+	longitude VARCHAR(255),
+	latitude VARCHAR(255),
+	orientation VARCHAR(5),
+	captured DATE DEFAULT GETDATE(),
+	comment VARCHAR(MAX),
+	FOREIGN KEY (userID) REFERENCES [User](userID),
+	FOREIGN KEY (turtleID) REFERENCES [Turtle](turtleID)
+);
+
+CREATE TABLE [Information] (
+	informationID BIGINT IDENTITY(1,1) PRIMARY KEY,
+	userID BIGINT NOT NULL,
+	turtleID BIGINT NOT NULL,
+	categoryID BIGINT NOT NULL,
+	recorded DATE DEFAULT GETDATE(),
+	value VARCHAR(MAX),
+	FOREIGN KEY(userID) REFERENCES [User](userID),
+	FOREIGN KEY(turtleID) REFERENCES [Turtle](turtleID),
+	FOREIGN KEY(categoryID) REFERENCES [Category](categoryID)
+);
+
+
+INSERT INTO dbo.[User] (username, userPassword)
+VALUES 
+('Joe', '1234'),
+('MorganFreeman12', 'betterThanDenzelWashington');
