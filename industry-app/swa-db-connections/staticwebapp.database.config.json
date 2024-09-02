@@ -30,11 +30,20 @@
     }
   },
   "entities": {
-    "testImage": {
-      "source": "dbo.testImage",
+    "Image": {
+      "source": "dbo.Image",
       "permissions": [
         {
-          "actions": ["*"],
+          "actions": ["read","create"],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "categories": {
+      "source": "dbo.Category",
+      "permissions": [
+        {
+          "actions": ["read"],
           "role": "anonymous"
         }
       ]
