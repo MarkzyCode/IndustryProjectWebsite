@@ -2,14 +2,16 @@
     // @ts-nocheck
 
     import Banner from '$lib/banner.svelte';
+    import Footer from '$lib/footer.svelte';
     import * as exifr from 'exifr';
     import { onMount } from 'svelte';
+    import { readable } from 'svelte/store';
 
     let files;
     let submitting = false;
     let images = [];
     let locationData = { lat: '', lon: '' };
-    let capturedDate = ''
+    let capturedDate = '';
     let categories;
     let orientation;
     let categoryValues = {};
@@ -28,7 +30,7 @@
     }
 
     onMount(() => {
-        LoadCategories()
+        LoadCategories();
     })
 
     $: if (files) {
@@ -126,17 +128,19 @@
     }
 </script>
 
-<link rel="stylesheet" type="text/css" href="./src/styles.css"/>
-
 <Banner></Banner>
 
-{#if files}
-    {#each Array.from(files) as file}
-        <img src={URL.createObjectURL(file)} alt="Uploaded image">
-    {/each}
-{/if}
+<br>
 
 <form id="photo" on:submit={onSubmit}>
+
+    {#if files}
+        <div class="image-container">
+            {#each Array.from(files) as file}
+                <img class="image" src={URL.createObjectURL(file)} alt="Uploaded image">
+            {/each}
+        </div>
+    {/if}
     <label for="picture">Upload a picture:</label>
     <input accept="image/png, image/jpeg" bind:files id="picture" name="picture" type="file" required />
     <br>
@@ -173,3 +177,7 @@
     <br>
     <button type="submit" disabled={submitting}>Upload</button>
 </form>
+
+<br><br>
+
+<Footer></Footer>
