@@ -47,6 +47,15 @@
           "role": "anonymous"
         }
       ]
+    },
+    "information": {
+      "source": "dbo.Information",
+      "permissions": [
+        {
+          "actions": ["read", "create"],
+          "role": "anonymous"
+        }
+      ]
     }
   }
 }

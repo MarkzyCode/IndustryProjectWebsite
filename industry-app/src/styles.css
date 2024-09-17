@@ -1,11 +1,14 @@
 /* Add a black background color to the top navigation */
 .topnav {
+    width: 100%;
+    left: 0;
     background-color: #333;
     overflow: hidden;
     align-items: center;
     display: flex;
     justify-content: space-between;
     /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    padding: 0;
 }
 
 /* Style the links inside the navigation bar */
@@ -32,18 +35,20 @@
 
 /* Style the footer */
 .footer {
+    position: fixed;
     background-color: #333;
     color: white;
     text-align: center;
-    padding: 20px;
-    border-radius: 10px; /* Add rounded corners */
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1); /* Add a box shadow */
     margin-top: 20px; /* Add some space above the footer */
     font-size: 14px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
 }
 
-.footer p {
-    margin: 0;
+.myDiv {
+    display: none;
 }
 
 .loader {

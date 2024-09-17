@@ -6,13 +6,14 @@
     import * as exifr from 'exifr';
     import { onMount } from 'svelte';
     import { readable } from 'svelte/store';
+    // import { redirect } from '@sveltejs/kit'
 
     let files;
     let submitting = false;
     let images = [];
     let locationData = { lat: '', lon: '' };
     let capturedDate = '';
-    let categories;
+    let categories = [];
     let orientation;
     let categoryValues = {};
     let comment;
@@ -52,6 +53,7 @@
                         locationData = { lat: metadata.latitude, lon: metadata.longitude };
                         console.log(`Location: Latitude ${metadata.latitude}, Longitude ${metadata.longitude}`);
                     } else {
+                        locationData = { lat: '', lon: '' };
                         console.log('No GPS data found');
                     }
 
@@ -59,6 +61,7 @@
                         capturedDate = new Date(metadata.DateTimeOriginal).toISOString().split('T')[0];
                         console.log(`Captured Date: ${capturedDate}`);
                     } else {
+                        capturedDate = '';
                         console.log('No capture date found');
                     }
                 } catch (error) {
@@ -77,14 +80,32 @@
     async function submitData() {
         try {
             let pic = new Blob([files], { type: 'image/jpeg' });
-            let picBase64 = await convertBlobToBase64(pic);
-            console.log(picBase64);
 
-            // categoryValues.forEach(i => {
-            //     console.log(i.value);
-            // });
+            const promises = Object.keys(categoryValues).map(async category => {
+                const response = await fetch('data-api/rest/information', {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        userID: null, 
+                        turtleID: null, 
+                        categoryID: category, 
+                        value: categoryValues[category]
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server responded with ${response.status}: ${errorText}`);
+                }
+            })
 
-            const response = await fetch('data-api/rest/Image', {
+            await Promise.all(promises);
+
+            // const blob = await fetch(images[0]).then(response => response.blob());  const reader = new FileReader();
+            // reader.onloadend = () => resolve(reader.result.split(',')[1]); // Strip the metadata
+
+            const imageResponse = await fetch('data-api/rest/Image', {
                 method: 'POST',
                 body: JSON.stringify({ 
                     userID: null, 
@@ -101,21 +122,14 @@
                     'Content-Type': 'application/json'
                 }
             });
+
+            await imageResponse.json();
+
             console.log("uploaded");
+            window.location.href = '/results';
         } catch (error) {
             console.error('Error submitting data:', error);
-        } finally {
-            submitting = false;
         }
-    }
-
-    function convertBlobToBase64(blob) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result.split(',')[1]); // Strip the metadata
-            reader.onerror = reject;
-            reader.readAsDataURL(blob); // Converts the blob to a Base64 data URL
-        });
     }
 
     function onSubmit(event) {
