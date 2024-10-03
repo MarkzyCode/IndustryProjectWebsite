@@ -5,37 +5,23 @@
     import Footer from '$lib/footer.svelte';
     import * as exifr from 'exifr';
     import { onMount } from 'svelte';
-    import { readable } from 'svelte/store';
-    // import { redirect } from '@sveltejs/kit'
+    import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN } from '$env/static/public';
+    // import { page } from '$app/stores';
+    // import { readable } from 'svelte/store';
+
+    export let data;
+    let { categories } = data;
 
     let files;
     let submitting = false;
     let images = [];
     let locationData = { lat: '', lon: '' };
     let capturedDate = '';
-    let categories = [];
     let orientation;
     let categoryValues = {};
     let comment;
 
-    async function LoadCategories() {
-        try {
-            let response = await fetch('data-api/rest/categories');
-            response = await response.json();
-            console.log(response.value);
-
-            categories = response.value;
-        } catch (error) {
-            console.error('Error fetching categories:', error);
-        }
-    }
-
-    onMount(() => {
-        LoadCategories();
-    })
-
     $: if (files) {
-        console.log(files);
         const reader = new FileReader();
         const file = files[0];
 
@@ -43,15 +29,10 @@
             const img = new Image();
 
             img.onload = async function() {
-                const width = img.width;
-                const height = img.height;
-                console.log(`Image dimensions: ${width}x${height}`);
-
                 try {
                     const metadata = await exifr.parse(file, { gps: true });
                     if (metadata && metadata.latitude && metadata.longitude) {
                         locationData = { lat: metadata.latitude, lon: metadata.longitude };
-                        console.log(`Location: Latitude ${metadata.latitude}, Longitude ${metadata.longitude}`);
                     } else {
                         locationData = { lat: '', lon: '' };
                         console.log('No GPS data found');
@@ -59,7 +40,6 @@
 
                     if (metadata.DateTimeOriginal) {
                         capturedDate = new Date(metadata.DateTimeOriginal).toISOString().split('T')[0];
-                        console.log(`Captured Date: ${capturedDate}`);
                     } else {
                         capturedDate = '';
                         console.log('No capture date found');
@@ -77,10 +57,22 @@
         reader.readAsDataURL(file);
     }
 
+    // Will need to be converted to a POST request to an azure function for added security
+    async function uploadImage(file) {
+        const url = `${PUBLIC_BLOB_URL}${file.name}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the front end
+
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'x-ms-blob-type': 'BlockBlob', // Required header for Azure Blob Storage
+                'Content-Type': file.type, // Set the content type to the file's MIME type
+            },
+            body: file
+        });
+    };
+
     async function submitData() {
         try {
-            let pic = new Blob([files], { type: 'image/jpeg' });
-
             const promises = Object.keys(categoryValues).map(async category => {
                 const response = await fetch('data-api/rest/information', {
                     method: 'POST',
@@ -100,18 +92,15 @@
                 }
             })
 
-            await Promise.all(promises);
+            const imageResponse = await uploadImage(files[0]);
 
-            // const blob = await fetch(images[0]).then(response => response.blob());  const reader = new FileReader();
-            // reader.onloadend = () => resolve(reader.result.split(',')[1]); // Strip the metadata
-
-            const imageResponse = await fetch('data-api/rest/Image', {
+            const imageDataResponse = await fetch('data-api/rest/Image', {
                 method: 'POST',
                 body: JSON.stringify({ 
                     userID: null, 
                     turtleID: null, 
                     secondaryImageID: null, 
-                    image: picBase64, 
+                    image: files[0].name,  
                     matchConfidence: null, 
                     longitude: locationData.lon, 
                     latitude: locationData.lat, 
@@ -122,8 +111,10 @@
                     'Content-Type': 'application/json'
                 }
             });
-
-            await imageResponse.json();
+            if (!imageDataResponse.ok) {
+                const errorText = await imageDataResponse.text();
+                throw new Error(`Server responded with ${imageDataResponse.status}: ${errorText}`);
+            }
 
             console.log("uploaded");
             window.location.href = '/results';
