@@ -28,7 +28,7 @@ CREATE TABLE [Species] (
 
 CREATE TABLE [Category] (
 	categoryID BIGINT IDENTITY(1,1) PRIMARY KEY,
-	userID BIGINT NOT NULL,
+	userID BIGINT,
 	category VARCHAR(50),
 	description VARCHAR(MAX),
 	unit VARCHAR(50) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE [Category] (
 
 CREATE TABLE [Turtle] (
 	turtleID BIGINT IDENTITY(1,1) PRIMARY KEY,
-	speciesID BIGINT NOT NULL,
+	speciesID BIGINT,
 	secondaryTurtleID VARCHAR(20),
 	name VARCHAR(35),
 	gender VARCHAR(25),
@@ -49,10 +49,10 @@ CREATE TABLE [Turtle] (
 
 CREATE TABLE [Image] (
 	imageID BIGINT IDENTITY(1,1) PRIMARY KEY,
-	userID BIGINT NOT NULL,
-	turtleID BIGINT NOT NULL,
+	userID BIGINT,
+	turtleID BIGINT,
 	secondaryImageID VARCHAR(20),
-	image VARBINARY(MAX),
+	image VARCHAR(50),
 	matchConfidence INT,
 	longitude VARCHAR(255),
 	latitude VARCHAR(255),
@@ -65,9 +65,9 @@ CREATE TABLE [Image] (
 
 CREATE TABLE [Information] (
 	informationID BIGINT IDENTITY(1,1) PRIMARY KEY,
-	userID BIGINT NOT NULL,
-	turtleID BIGINT NOT NULL,
-	categoryID BIGINT NOT NULL,
+	userID BIGINT,
+	turtleID BIGINT,
+	categoryID BIGINT,
 	recorded DATE DEFAULT GETDATE(),
 	value VARCHAR(MAX),
 	FOREIGN KEY(userID) REFERENCES [User](userID),
