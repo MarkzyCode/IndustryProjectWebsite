@@ -66,7 +66,7 @@
         //     console.error('Error fetching turtles:', error);
         // }
         
-        await setTimeout(5000); // change all this once AI API is ready
+        await setTimeout(10000); // change all this once AI API is ready
         response = [
             {turtleID: 404, matchConfidence: 0.9}, 
             {turtleID: 405, matchConfidence: 0.8}, 
@@ -160,7 +160,7 @@
 
     <div class="actions">
         <button class="details-button" on:click={() => getTurtleDetails(selectedTurtle)}>More Details</button>
-        <button class="new-upload-button">New Upload</button>
+        <button class="new-upload-button" on:click={() => window.location.href = '/'}>New Upload</button>
     </div>
 </div>
 
