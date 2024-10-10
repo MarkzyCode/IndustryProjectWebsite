@@ -131,58 +131,113 @@
             submitData();
         }
     }
+
 </script>
 
-<Banner></Banner>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRAC Application</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
 
-<br>
+<body>
 
-<form id="photo" on:submit={onSubmit}>
-
-    {#if files}
-        <div class="image-container">
-            {#each Array.from(files) as file}
-                <img class="image" src={URL.createObjectURL(file)} alt="Uploaded image">
-            {/each}
+    <Banner></Banner>
+    
+    <div class="container--center">
+        <div class="container__title">
+            <span data-text="Turtle Recognition,"></span>
+            <span data-text="Awareness"></span>
+            <span data-text="and Conservation"></span>
         </div>
-    {/if}
-    <label for="picture">Upload a picture:</label>
-    <input accept="image/png, image/jpeg" bind:files id="picture" name="picture" type="file" required />
-    <br>
-    <ol>
-        <li>
-            <label for="Lat">Latitude: </label>
-            <input type="text" id="Lat" name="Lat" bind:value={locationData.lat} required><br>
-        </li>
-        <li>
-            <label for="Lat">Longitude: </label>
-            <input type="text" id="Lon" name="Lon" bind:value={locationData.lon} required><br>
-        </li>
-        <li>
-            <label for="Cap">Captured Date: </label>
-            <input type="date" id="Cap" name="Cap" bind:value={capturedDate} required><br>
-        </li>
-        <li>
-            <label for="Ori">Orientation: </label>
-            <input type="text" id="Ori" bind:value={orientation} name="Ori" placeholder="Top, Left, or Right"><br>
-        </li>
-        {#if categories}
-            {#each categories as category}
-                <li>
-                    <label for="{category.categoryID}">{category.category}: </label>
-                    <input type="text" id="{category.categoryID}" bind:value={categoryValues[category.categoryID]} name={category.category} placeholder="{category.description}"><br>
-                </li>
-            {/each}
-        {/if}
-        <li>
-            <label for="Com">Comment: </label>
-            <input type="text" id="Com" bind:value={comment} name="Com" placeholder="Any extra information?"><br>
-        </li>
-    </ol>
-    <br>
-    <button type="submit" disabled={submitting}>Upload</button>
-</form>
 
-<br><br>
+        <h1 class="container__subheading">Easily identify and <b class="bold1">track turtles with cutting-edge AI technology</b>. 
+            Simply upload your file below to get started!</h1> 
 
-<Footer></Footer>
+    </div>
+
+    
+        <div class="form--allignment">
+            <form id="photo" on:submit={onSubmit}>
+        
+                <div class="form__header">
+                    <i class="fa-solid fa-cloud-arrow-up" id="cloud"></i>
+                    <label for="picture" class="form__title">Upload Turtle Image <span class="asterisk__red">*</span></label>
+                </div>
+                
+                <div class="custom__upload">
+                    <input accept="image/png, image/jpeg" bind:files id="picture" name="picture" type="file" required class="file__input"/>
+
+                    {#if !files}  <!-- Check if files are not present -->
+                        <i class="fa-solid fa-arrow-up-from-bracket" id="upload__icon"></i>
+                        <label for="picture" class="custom__upload__label">
+                            Drop Items here or <span class="upload__keyword">browse files</span>
+                        </label>
+                    {/if}
+
+                    {#if files}
+                        <div class="image__container">
+                            {#each Array.from(files) as file}
+                                <img class="custom__upload__image" src={URL.createObjectURL(file)} alt="Uploaded image">
+                            {/each}
+                        </div>
+                    {/if}
+                </div> 
+
+                <div class="under__upload">
+                    <label for="file-size" class="file__size">up to 25mb</label>
+                    <p class="movelower__dot">&#x2022;</p>
+                    <input accept="image/png, image/jpeg" bind:files id="picture" name="picture" type="file" required class="movelower__input"/>
+                </div>
+                
+                <ol>
+                    <li>
+                        <div class="form__input__container--primary">
+                            <input type="text" id="Lat" name="Lat" bind:value={locationData.lat} required placeholder="">
+                            <label for="Lat" class="form__placeholder">Latitude: </label> 
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form__input__container--primary">
+                            <input type="text" id="Lon" name="Lon" bind:value={locationData.lon} required placeholder="">
+                            <label for="Lat" class="form__placeholder">Longitude: </label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form__input__container--primary">
+                            <input type="date" id="Cap" name="Cap" bind:value={capturedDate} required placeholder="">
+                            <label for="Cap" class="form__placeholder">Captured Date: </label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="input__with__placeholders--secondary">
+                            <label for="Ori" class="form__placeholder">Orientation: </label>
+                            <input type="text" id="Ori" name="Ori" bind:value={orientation} required placeholder="Top, Left, or Right">
+                        </div>
+                    </li>
+                    {#if categories}
+                        {#each categories as category}
+                            <li>
+                                <div class="input__with__placeholders--secondary">   
+                                    <label for="{category.categoryID}" class="form__placeholder">{category.category}: </label>
+                                    <input type="text" id="{category.categoryID}" bind:value={categoryValues[category.categoryID]} name={category.category} placeholder="{category.description}">
+                                </div>
+                            </li>
+                        {/each}
+                    {/if}
+                    <li>
+                        <div class="input__with__placeholders--secondary">
+                            <label for="Com" class="form__placeholder">Comment: </label>
+                            <input type="text" id="Com" bind:value={comment} name="Com" placeholder="Provide details about the subject...">
+                        </div>
+                    </li>
+                </ol>
+                <button type="submit" class="form__button" disabled={submitting}>Upload</button>
+            </form>
+        </div>
+    
+    <Footer></Footer>
+
+</body>

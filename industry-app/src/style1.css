@@ -1,0 +1,83 @@
+.topnav {
+    background: linear-gradient(to right, #6ebccf, #1a7a72);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+.menuList {
+    list-style: none;
+}
+
+/* .topnav nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+}  */
+
+.topnav h1 {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.open {
+    display: block;
+}
+
+.burger {
+    height: 28px;
+    border: 2px solid var(--light);
+    aspect-ratio: 1;
+    background-color: transparent;
+    border-radius: 5px;
+    margin-right: 20px;
+}
+
+.burger > div {
+    height: 2px;
+    width: 14px;
+    background-color: var(white);
+    position: absolute;
+}
+
+.line1 {
+    transform: translateY(-5px);
+}
+
+.line3 {
+    transform: translateY(5px);
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+#turtle-logo {
+    margin-left: 20px;
+}
+
+#menu {
+    margin-left: auto;
+}
+
+/* .topnav h1 {
+    margin-left: 20px;
+    color: white;
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 1.5px; 
+} */
