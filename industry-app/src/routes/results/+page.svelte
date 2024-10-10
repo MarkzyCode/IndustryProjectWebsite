@@ -10,6 +10,9 @@
     let currentTurtleIndex = 0;
     let turtles = {};
     let selectedTurtle = writable({});
+    let L;
+    let map;
+    let markerLocations = {};
 
     // Will need to be converted to a POST request to an azure function for added security
     async function getDetails(turtleID) {
@@ -19,9 +22,18 @@
 
             const turtleData = data.value.find(turtle => turtle.turtleID === turtleID);
             if (!turtleData) {
-                throw new Error(`No image found for turtleID ${turtleID}`);
+                console.log(`No image found for turtleID ${turtleID}`);
             }
 
+            if (!markerLocations[turtleData.turtleID]) {
+                markerLocations[turtleData.turtleID] = [];
+            }
+
+            // turtleData.forEach(location => {
+                // markerLocations[location.turtleID].push([location.latitude, location.longitude])
+            // });
+
+            markerLocations[turtleData.turtleID].push([turtleData.latitude, turtleData.longitude])
             const fileName = turtleData.image;
             const Long = turtleData.longitude;
             const Lat = turtleData.latitude;
@@ -83,12 +95,31 @@
 
         turtles = updatedResponse;
         selectedTurtle.set(turtles[currentTurtleIndex]);
+        loadMap(turtles[currentTurtleIndex].turtleID);
 
         document.querySelector('.loader').style.display = 'none';
         document.querySelector('.loaded').style.display = "block";
     }
 
-    onMount(() => {
+    function loadMap(turtle) {
+        if (map) {
+            map.remove();
+        }
+        map = L.map('map').setView(markerLocations[turtle][0], 4);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        markerLocations[turtle].forEach(location => {
+            L.marker(location).addTo(map);
+        });
+    }
+
+    onMount(async() => {
+        const leaflet = await import('leaflet');
+        L = leaflet.default;
+
         LoadTurtles()
     })
 
@@ -96,6 +127,7 @@
         if (turtles.length > 0) {
             currentTurtleIndex = (currentTurtleIndex + 1) % turtles.length;
             selectedTurtle.set(turtles[currentTurtleIndex]);
+            loadMap(turtles[currentTurtleIndex].turtleID);
         }
     }
 
@@ -103,6 +135,7 @@
         if (turtles.length > 0) {
             currentTurtleIndex = (currentTurtleIndex - 1 + turtles.length) % turtles.length;
             selectedTurtle.set(turtles[currentTurtleIndex]);
+            loadMap(turtles[currentTurtleIndex].turtleID);
         }
     }
 
@@ -111,6 +144,10 @@
     }
 
 </script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+   crossorigin=""/>
 
 <link rel="stylesheet" type="text/css" href="./src/styles.css"/>
 
@@ -155,6 +192,7 @@
         </div>
 
         <div class="map-panel">
+            <div id="map"></div>
         </div>
     </div>
 
