@@ -6,6 +6,7 @@
     import { onMount } from "svelte";
     import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN } from '$env/static/public';
     import { writable } from 'svelte/store';
+    import { DivIcon } from "leaflet";
 
     let currentTurtleIndex = 0;
     let turtles = {};
@@ -28,6 +29,8 @@
             if (!markerLocations[turtleData.turtleID]) {
                 markerLocations[turtleData.turtleID] = [];
             }
+
+            
 
             // turtleData.forEach(location => {
                 // markerLocations[location.turtleID].push([location.latitude, location.longitude])
@@ -97,8 +100,6 @@
         selectedTurtle.set(turtles[currentTurtleIndex]);
         loadMap(turtles[currentTurtleIndex].turtleID);
 
-        document.querySelector('.loader').style.display = 'none';
-        document.querySelector('.loaded').style.display = "block";
     }
 
     function loadMap(turtle) {
@@ -143,106 +144,211 @@
         window.location.href = `results/${turtle.turtleID}`;
     }
 
+    let loading = true;
+
+    onMount(() => {
+        setTimeout(() => {
+            loading = false;
+        }, 1500); // 1.5 seconds
+    });
+
 </script>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-   crossorigin=""/>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRAC Application</title>
+    <link rel="stylesheet" href="./src/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+</head>
 
-<link rel="stylesheet" type="text/css" href="./src/styles.css"/>
+{#if loading}
+    <div class="loading__spinner"></div>
+{:else}
+    <body>
+        <div>
+            <Banner></Banner>
+        </div>
 
-<Banner></Banner>
+        <div class="horizontal-block"> 
+            <div class="left-side">
+                <div class="preview-panel">
+                    <button class="nav-button" on:click={previousTurtle}>&lt;</button>
+                    <div class="image-preview">
+                        <img src={$selectedTurtle.imageURL} alt="Turtle" />
+                    </div>
+                    <button class="nav-button" on:click={nextTurtle}>&gt;</button>
+                </div>
 
-<br>
-
-<div class="loader"></div>
-
-<div class="loaded">
-    <div class="container">
-        <div class="preview-panel">
-            <button class="nav-button" on:click={previousTurtle}>&lt;</button>
-            <div class="image-preview">
-                <img src={$selectedTurtle.imageURL} alt="Turtle" />
                 <div class="image-info">{currentTurtleIndex + 1}/{turtles.length}</div>
+
+                <div class="details-panel">
+
+                    <ol>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="TurtleID" class="form__placeholder">Turtle ID: </label>
+                                <input class="input__style" type="text" value="{$selectedTurtle.turtleID}" readonly placeholder="[No Value Found]">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Orientation" class="form__placeholder">Orientation: </label>
+                                <input class="input__style" type="text" value="{$selectedTurtle.orientation}" readonly placeholder="[No Value Found]">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Date-Captured" class="form__placeholder">Date Captured: </label>
+                                <input class="input__style" type="text" value="{$selectedTurtle.date}" readonly placeholder="[No Value Found]">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Confidence" class="form__placeholder">Confidence: </label>
+                                <input class="input__style" type="text" value="{$selectedTurtle.matchConfidence}" readonly placeholder="[No Value Found]">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Comment" class="form__placeholder">Comment: </label>
+                                <textarea class="input__style" type="text" id="Com" name="Com" value="{$selectedTurtle.comment}" readonly placeholder="[No Value Found]"></textarea>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
             </div>
-            <button class="nav-button" on:click={nextTurtle}>&gt;</button>
+
+            <div class="map-side">
+                <div class="map-panel">
+                    <div id="map"></div>
+                </div>
+
+                <div class="map-description">
+                    <p class="map__title">Showing selected location: (location__name)</p>
+                    <ol>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Longitude" class="form__placeholder">Longitude : </label>
+                                <input class="input__style" type="text" value="{$selectedTurtle.longitude}" readonly placeholder="[No Value Found]">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Latitude" class="form__placeholder">Latitude : </label>
+                                <input class="input__style" type="text" value="{$selectedTurtle.latitude}" readonly placeholder="[No Value Found]">
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
         </div>
 
-        <div class="details-panel">
-            <div>
-                <label>Turtle ID:</label>
-                <input type="text" value="{$selectedTurtle.turtleID}" readonly />
-            </div>
-            <div>
-                <label>Confidence:</label>
-                <input type="text" value="{$selectedTurtle.matchConfidence}" readonly />
-            </div>
-            <div>
-                <label>Longitude:</label>
-                <input type="text" value="{$selectedTurtle.longitude}" readonly />
-            </div>
-            <div>
-                <label>Latitude:</label>
-                <input type="text" value="{$selectedTurtle.latitude}" readonly />
-            </div>
-            <div>
-                <label>Date:</label>
-                <input type="text" value="{$selectedTurtle.date}" readonly />
-            </div>
+        <div class="actions">
+            <button class="details-button" on:click={() => getTurtleDetails(selectedTurtle)}>More Details</button>
+            <button class="new-upload-button" on:click={() => window.location.href = '/'}>New Upload</button>
         </div>
 
-        <div class="map-panel">
-            <div id="map"></div>
-        </div>
-    </div>
+        <Footer></Footer>
+    </body>
 
-    <div class="actions">
-        <button class="details-button" on:click={() => getTurtleDetails(selectedTurtle)}>More Details</button>
-        <button class="new-upload-button" on:click={() => window.location.href = '/'}>New Upload</button>
-    </div>
-</div>
+    
 
-<Footer></Footer>
+{/if}
 
 <style>
-    /* Container styling for layout */
-    .container {
-        display: flex;
-        justify-content: space-between;
-        padding: 20px;
-        gap: 20px;
+
+    .map__title {
+        font-size: 16px;
+        font-weight: bold;
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        font-style: italic;
+        color: gray;
     }
+
+    .horizontal-block {
+        display: flex;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    .left-side, .map-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 150px;
+        margin-top: 40px;
+        margin-bottom: auto;
+    }
+
+    .left-side {
+        background-color: #ddd;
+        margin-bottom: 20px;
+        border-radius: 20px;
+        border: 2px dotted #c9c7c7;
+
+    }
+
+    .map-panel {
+        width: 400px;
+        height: 400px;
+        background-color: rgb(73, 73, 73);
+        padding: 5px;
+    }
+
+    .preview-panel, .details-panel {
+        margin: auto 30px;
+    }
+
     .preview-panel {
         display: flex;
         align-items: center;
         gap: 10px;
+        padding: 20px;
+
     }
+
+    .details-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 90%;
+    }
+
+    .map-description {
+        background-color: #ddd;
+        border-radius: 20px;
+        width: 100%;
+        padding: 20px;
+        margin-top: 40px;
+    }
+
+    .image-info {
+        background-color: rgb(51, 50, 50);
+        display: flex;
+        justify-content: center;
+        color: rgb(245, 243, 243);
+        padding: 2px;
+        font-size: 14px;
+        width: 40px;
+        margin-top: -50px;
+        border-radius: 10px;
+        z-index: 100;
+    }
+
     .image-preview {
         position: relative;
     }
+
     .image-preview img {
-        width: 250px;
-        height: 250px;
+        width: 320px;
+        height: 320px;
         object-fit: cover;
     }
-    .image-info {
-        position: absolute;
-        bottom: 5px;
-        left: 5px;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        padding: 2px 5px;
-        font-size: 14px;
-    }
-    .status-banner {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        padding: 2px 5px;
-        font-size: 14px;
-    }
+    
     .nav-button {
         background-color: #ddd;
         border: none;
@@ -250,29 +356,13 @@
         padding: 5px;
         cursor: pointer;
     }
-    .details-panel {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    .details-panel div {
-        display: flex;
-        justify-content: space-between;
-    }
-    .details-panel input {
-        width: 150px;
-        border: 1px solid #ccc;
-        padding: 5px;
-    }
-    .map-panel {
-        width: 300px;
-        height: 300px;
-    }
+
     .actions {
         display: flex;
         justify-content: space-evenly;
         margin-top: 20px;
     }
+
     .details-button, .new-upload-button {
         padding: 10px 20px;
         background-color: #008cba;
@@ -280,6 +370,7 @@
         border: none;
         cursor: pointer;
     }
+
     .details-button:hover, .new-upload-button:hover {
         background-color: #005f75;
     }
