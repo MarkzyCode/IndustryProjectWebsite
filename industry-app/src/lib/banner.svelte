@@ -34,7 +34,7 @@
 
     <div class="navbar__dropdown {isOpen ? 'open' : ''}" style:visibility={showDropdown ? 'visible' : 'hidden'}>
         <a href="/">Home</a>
-        <a href="/details">Login</a>
+        <a href="/login">Login</a>
         <a href="/results">About Us</a>
         <a href="/services">[Insert Client Company Website]</a>
     </div>
