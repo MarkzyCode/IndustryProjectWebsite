@@ -143,8 +143,9 @@
 </head>
 
 <body>
-
-    <Banner></Banner>
+    <div>
+        <Banner></Banner>
+    </div>
     
     <div class="container--center">
         <div class="container__title">
@@ -195,26 +196,26 @@
                 <ol>
                     <li>
                         <div class="form__input__container--primary">
-                            <input type="text" id="Lat" name="Lat" bind:value={locationData.lat} required placeholder="">
+                            <input class="input__style" type="text" id="Lat" name="Lat" bind:value={locationData.lat} required placeholder="">
                             <label for="Lat" class="form__placeholder">Latitude: </label> 
                         </div>
                     </li>
                     <li>
                         <div class="form__input__container--primary">
-                            <input type="text" id="Lon" name="Lon" bind:value={locationData.lon} required placeholder="">
+                            <input class="input__style" type="text" id="Lon" name="Lon" bind:value={locationData.lon} required placeholder="">
                             <label for="Lat" class="form__placeholder">Longitude: </label>
                         </div>
                     </li>
                     <li>
                         <div class="form__input__container--primary">
-                            <input type="date" id="Cap" name="Cap" bind:value={capturedDate} required placeholder="">
+                            <input class="input__style" type="date" id="Cap" name="Cap" bind:value={capturedDate} required placeholder="">
                             <label for="Cap" class="form__placeholder">Captured Date: </label>
                         </div>
                     </li>
                     <li>
                         <div class="input__with__placeholders--secondary">
                             <label for="Ori" class="form__placeholder">Orientation: </label>
-                            <input type="text" id="Ori" name="Ori" bind:value={orientation} required placeholder="Top, Left, or Right">
+                            <input class="input__style" type="text" id="Ori" name="Ori" bind:value={orientation} required placeholder="Top, Left, or Right">
                         </div>
                     </li>
                     {#if categories}
@@ -222,7 +223,7 @@
                             <li>
                                 <div class="input__with__placeholders--secondary">   
                                     <label for="{category.categoryID}" class="form__placeholder">{category.category}: </label>
-                                    <input type="text" id="{category.categoryID}" bind:value={categoryValues[category.categoryID]} name={category.category} placeholder="{category.description}">
+                                    <input class="input__style" type="text" id="{category.categoryID}" bind:value={categoryValues[category.categoryID]} name={category.category} placeholder="{category.description}">
                                 </div>
                             </li>
                         {/each}
@@ -230,7 +231,7 @@
                     <li>
                         <div class="input__with__placeholders--secondary">
                             <label for="Com" class="form__placeholder">Comment: </label>
-                            <input type="text" id="Com" bind:value={comment} name="Com" placeholder="Provide details about the subject...">
+                            <textarea class="input__style" id="Com" bind:value={comment} name="Com" placeholder="Provide details about the subject..."></textarea>
                         </div>
                     </li>
                 </ol>

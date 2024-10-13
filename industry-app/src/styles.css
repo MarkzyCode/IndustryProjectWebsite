@@ -25,6 +25,7 @@ body {
     padding: 0;
     background: linear-gradient(to bottom right, #99e7f5, #15665f);
     scrollbar-gutter: stable;
+    height: auto;
 }
 
 h1 {
@@ -488,23 +489,28 @@ h1 {
 	transition: all 0.5s ease-in-out;
     pointer-events: none;
 }
-.form__input__container--primary input, .input__with__placeholders--secondary input { 
+.input__style { 
     border:0;
     border-bottom:1px solid #555;  
     background:transparent;
     width:100%;
-    padding:8px 0 5px;
+    padding:8px 0 5px 8px;
     font-size:14px;
     color:#646464;
+    overflow-wrap: break-word; /* Ensures long words break */
+    word-wrap: break-word; /* Compatibility for older browsers */
+    white-space: pre-wrap; /* Preserve whitespace and allow line breaks */
+    resize: none; /* Allows user to resize the height */
+    font-family: Arial, Helvetica, sans-serif;
 }
-.form__input__container--primary input:focus , .input__with__placeholders--secondary input:focus { 
+.input__style:focus { 
     border:none;	
     outline:none;
     border-bottom:1px solid #3b312f;	
 }
 
-.form__input__container--primary input:focus ~ label,
-.form__input__container--primary input:not(:placeholder-shown) ~ label {
+.input__style:focus ~ label,
+.input__style:not(:placeholder-shown) ~ label {
 	top: -12px;
     left: -0.5px;
 	font-size: 13px;
@@ -531,22 +537,6 @@ form {
     box-shadow: 20px 20px 10px rgba(0, 0, 0, 0.1);
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-
-/* form::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('grit-texture.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0.5; 
-    z-index: -1; 
-    border-radius: inherit; 
-} */
 
 input[type="text"],
 input[type="file"] {
@@ -578,7 +568,7 @@ ol {
     display: none;
 }
 
-.loader {
+.loading__spinner {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -590,7 +580,7 @@ ol {
     border-radius: 50%;
     border-top: 16px solid #3498db;
     -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
+    animation: spin 1.5s linear infinite;
 }
 
 @keyframes spin {
@@ -599,7 +589,7 @@ ol {
 }
 
 #map {
-    height: 500px;
+    height: 100%;
     width: 100%;
 }
 
@@ -659,4 +649,6 @@ ol {
     border-radius: 10px; /* Rounded corners */
     border: 3px solid #f1f1f1; /* Space around the thumb */
 }
+
+
 

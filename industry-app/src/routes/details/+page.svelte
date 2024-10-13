@@ -35,7 +35,6 @@
 
 <h1>Welcome to details</h1>
 
-<div id="map"></div>
 
 <br><br>
 
