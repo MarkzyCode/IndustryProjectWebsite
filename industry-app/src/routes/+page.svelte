@@ -132,12 +132,18 @@
         }
     }
 
+    function autoResize(event) {
+    const textarea = event.target;
+    textarea.style.height = '30px'; // Reset height
+    textarea.style.height = `${textarea.scrollHeight}px`; // Adjust height based on content
+    }
+
 </script>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRAC Application</title>
+    <title>TRAC - Turtle Recognition, Awareness and Conservation: Nurturing Wildlife</title>
     <link rel="stylesheet" href="./src/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
@@ -181,7 +187,7 @@
                     {#if files}
                         <div class="image__container">
                             {#each Array.from(files) as file}
-                                <img class="custom__upload__image" src={URL.createObjectURL(file)} alt="Uploaded image">
+                                <img class="custom__upload__image" src={URL.createObjectURL(file)} alt="wilflife-input">
                             {/each}
                         </div>
                     {/if}
@@ -231,11 +237,14 @@
                     <li>
                         <div class="input__with__placeholders--secondary">
                             <label for="Com" class="form__placeholder">Comment: </label>
-                            <textarea class="input__style" id="Com" bind:value={comment} name="Com" placeholder="Provide details about the subject..."></textarea>
+                            <textarea class="input__style" id="Com" bind:value={comment} on:input={autoResize} name="Com" placeholder="Provide details about the subject..."></textarea>
                         </div>
                     </li>
                 </ol>
-                <button type="submit" class="form__button" disabled={submitting}>Upload</button>
+                <div class="button__block">
+                    <button type="submit" class="form__button" disabled={submitting}>Upload</button>
+                </div>
+                
             </form>
         </div>
     

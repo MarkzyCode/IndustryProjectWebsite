@@ -24,18 +24,21 @@
         <h1 class="navbar__projectname">Application</h1>
     </div>
    
-    <h1 class="navbar__menulabel">Menu</h1>
+    <div class="navbar__container--secondary">
+      <h1 class="navbar__menulabel">Menu</h1>
 
-    <div class="navbar__icon {isOpen ? 'open' : ''}" on:click={toggleMenu}>
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+      <div class="navbar__icon {isOpen ? 'open' : ''}" on:click={toggleMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
+      </div>
 
-    <div class="navbar__dropdown {isOpen ? 'open' : ''}" style:visibility={showDropdown ? 'visible' : 'hidden'}>
-        <a href="/">Home</a>
-        <a href="/login">Login</a>
-        <a href="/results">About Us</a>
-        <a href="/services">[Insert Client Company Website]</a>
+      <div class="navbar__dropdown {isOpen ? 'open' : ''}" style:visibility={showDropdown ? 'visible' : 'hidden'}>
+          <a href="/">Home</a>
+          <a href="/login">Login</a>
+          <a href="/results">About Us</a>
+          <a href="/services">[Insert Client Company Website]</a>
+      </div>
     </div>
+    
 </div>

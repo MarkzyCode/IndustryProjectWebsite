@@ -62,6 +62,11 @@ h1 {
     margin-left: 1.25rem;
 }
 
+.navbar__container--secondary {
+    display: flex;
+    margin-left: auto;
+}
+
 .navbar__projectname, .navbar__menulabel {
     color: var(--text-main-white);
     font-family: Arial, Helvetica, sans-serif;
@@ -72,7 +77,6 @@ h1 {
 }
 
 .navbar__menulabel {
-    margin-left: auto;
     padding-right: 1.875rem;
 }
 
@@ -427,6 +431,13 @@ h1 {
     transform: translateY(16px); /* Adjust the value to move the input down */
 }
 
+.button__block {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    clear: both;
+}
+
 .form__button {
     background-color: #529981;
     border: 1px solid #222222;
@@ -439,17 +450,12 @@ h1 {
     font-size: 16px;
     font-weight: 600;
     line-height: 20px;
-    margin-left: 20px;
-    left: 30%;
-    outline: none;
     padding: 13px 23px;
+    margin: 40px;
     position: relative;
     text-align: center;
-    text-decoration: none;
     touch-action: manipulation;
     transition: box-shadow .2s,-ms-transform .1s,-webkit-transform .1s,transform .1s;
-    user-select: none;
-    -webkit-user-select: none;
     width: 30%;
 }
 
@@ -475,10 +481,16 @@ h1 {
    Section: FORM--INPUTS
    ===================================== */
 
-.form__input__container--primary, .input__with__placeholders{
+.form__input__container--primary{
 	position:relative;
 	margin-bottom:25px;
 }
+
+.input__with__placeholders--secondary {
+    margin-top: 10px;
+    height: auto;
+}
+
 .form__input__container--primary label{
 	position:absolute;
 	top:8px;
@@ -502,6 +514,11 @@ h1 {
     white-space: pre-wrap; /* Preserve whitespace and allow line breaks */
     resize: none; /* Allows user to resize the height */
     font-family: Arial, Helvetica, sans-serif;
+    height: 30px;
+    min-height: 30px; /* Set the initial height */
+    max-height: 200px; /* Optional: limit how much it can grow */
+    overflow-y: hidden; /* Hide scrollbar */
+    line-height: 1.2em; /* Consistent line height */
 }
 .input__style:focus { 
     border:none;	
@@ -619,6 +636,25 @@ ol {
     .container__title  span {
         font-size: 8vmin; /* Further reduce font size for spans */
     }
+
+    .form--allignment {
+        margin: 20px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .navbar__container--secondary {
+        display: flex;
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .navbar__dropdown {
+        top: 250px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -648,6 +684,149 @@ ol {
     background-color: #888; /* Darker color for the thumb */
     border-radius: 10px; /* Rounded corners */
     border: 3px solid #f1f1f1; /* Space around the thumb */
+}
+
+/* =====================================
+   Section: RESULTS PAGE CSS
+   ===================================== */
+
+.horizontal__block {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+}
+
+.results__side, .map__side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 40px auto 150px auto;
+}
+
+.results__side {
+    background-color: #ddd;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    border: 2px dotted #c9c7c7;
+
+}
+
+.image__preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    min-height: 200px;
+    min-width: 450px;
+}
+
+.image__preview img {
+    width: 320px;
+    height: 320px;
+    object-fit: cover;
+}
+
+.next__button1, .next__button2 {
+    background-color: #cecece;
+    color: white;
+    border-radius: 50%;
+    
+    border: 2px solid #969595;
+    font-size: 20px;
+    padding: 5px;
+    cursor: pointer;
+    top: 45%;
+    position: absolute;
+    width: 35px; /* Set a fixed width */
+    height: 35px; /* Set a fixed height */
+    z-index: 100;
+}
+
+.next__button1 {
+    left: 5%;
+}
+
+.next__button2 {
+    right: 5%;
+}
+
+.total__count {
+    background-color: rgb(51, 50, 50);
+    display: flex;
+    justify-content: center;
+    color: rgb(245, 243, 243);
+    padding: 2px;
+    font-size: 14px;
+    width: 40px;
+    margin-top: -50px;
+    border-radius: 10px;
+    z-index: 100;
+}
+
+.details__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 90%;
+    min-width: 340px;
+}
+
+.image__preview, .details__panel {
+    margin: auto 30px;
+}
+
+.map__panel {
+    width: 400px;
+    height: 400px;
+    background-color: rgb(73, 73, 73);
+    padding: 5px;
+}
+
+.map__title {
+    font-size: 16px;
+    font-weight: bold;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-style: italic;
+    color: gray;
+}
+
+.map__description {
+    background-color: #ddd;
+    border-radius: 20px;
+    width: 100%;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+@media (max-width: 1100px) {
+    .horizontal__block {
+        flex-direction: column; /* Stack items vertically */
+        height: auto;
+        justify-items: center;
+        align-items: center;
+    }
+
+    .details__panel {
+        min-width: 300px;
+    }
+
+    .results__side, .map__side {
+        margin: 30px;
+        flex: 1 1 300px; /* Each side will be at least 300px wide */
+        min-width: 23.75rem;
+        width: 70%;
+    }
+
+    .next__button1{
+        left: 10%;
+        margin-left: 20px;
+    }
+
+    .next__button2{
+        right: 10%;
+        margin-right: 20px;
+    }
+
 }
 
 

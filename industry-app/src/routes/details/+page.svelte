@@ -3,13 +3,16 @@
     import Footer from "$lib/footer.svelte";
     import { onMount } from 'svelte';
 
+    // @ts-ignore
     let L;
+    // @ts-ignore
     let map;
     let markerLocations = [
         [-3.388123333333333, 39.971043333333334]
     ];
 
     onMount(async () => {
+        // @ts-ignore
         const leaflet = await import('leaflet');
         L = leaflet.default;
 
@@ -20,6 +23,7 @@
         }).addTo(map);
 
         markerLocations.forEach(location => {
+            // @ts-ignore
             L.marker(location).addTo(map);
         });
     });
@@ -29,13 +33,28 @@
    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
    crossorigin=""/>
 
-<Banner></Banner>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dive deeper into your wildlife experience | TRAC </title>
+    <link rel="stylesheet" href="./src/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+</head>
 
-<br>
+<body>
+    <div>
+        <Banner></Banner>
+    </div>
 
-<h1>Welcome to details</h1>
+    <br>
+
+    <h1>Welcome to details</h1>
 
 
-<br><br>
+    <br><br>
 
-<Footer></Footer>
+    <Footer></Footer>
+</body>
