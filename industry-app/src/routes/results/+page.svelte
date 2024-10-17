@@ -3,19 +3,19 @@
 
     import Banner from "$lib/banner.svelte";
     import Footer from "$lib/footer.svelte";
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
     import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN } from '$env/static/public';
     import { writable } from 'svelte/store';
-    import { DivIcon } from "leaflet";
+    import { currentLocations } from '$lib/stores';
+    import Map from "$lib/map.svelte";
 
     let currentTurtleIndex = 0;
     let turtles = {};
     let selectedTurtle = writable({});
-    let L;
-    let map;
     let markerLocations = {};
+    let loading = true;
 
-    // Will need to be converted to a POST request to an azure function for added security
+    // Will need to be converted to a POST request to an azure function/server side for added security
     async function getDetails(turtleID) {
         try {
             const imageDataResponse = await fetch(`data-api/rest/Image`)
@@ -30,8 +30,6 @@
                 markerLocations[turtleData.turtleID] = [];
             }
 
-            
-
             // turtleData.forEach(location => {
                 // markerLocations[location.turtleID].push([location.latitude, location.longitude])
             // });
@@ -41,6 +39,8 @@
             const Long = turtleData.longitude;
             const Lat = turtleData.latitude;
             const Date = turtleData.captured;
+            const Orientation = turtleData.orientation;
+            const Comment = turtleData.comment;
 
             const url = `${PUBLIC_BLOB_URL}${fileName}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the front end
 
@@ -58,7 +58,9 @@
                 imageURL: imageURL,
                 longitude: Long,
                 latitude: Lat,
-                date: Date
+                date: Date,
+                orientation: Orientation,
+                comment: Comment
             }
 
             return returnResponse;
@@ -93,42 +95,27 @@
             turtle.longitude = details.longitude;
             turtle.latitude = details.latitude;
             turtle.date = details.date;
+            turtle.orientation = details.orientation;
+            turtle.comment = details.comment;
             return turtle;
         }));
 
         turtles = updatedResponse;
         selectedTurtle.set(turtles[currentTurtleIndex]);
-        loadMap(turtles[currentTurtleIndex].turtleID);
-
+        loading = false;
+        await tick();
+        currentLocations.set(markerLocations[turtles[currentTurtleIndex].turtleID]);
     }
 
-    function loadMap(turtle) {
-        if (map) {
-            map.remove();
-        }
-        map = L.map('map').setView(markerLocations[turtle][0], 4);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        markerLocations[turtle].forEach(location => {
-            L.marker(location).addTo(map);
-        });
-    }
-
-    onMount(async() => {
-        const leaflet = await import('leaflet');
-        L = leaflet.default;
-
-        LoadTurtles()
+    onMount(() => {
+        LoadTurtles();
     })
 
     function nextTurtle() {
         if (turtles.length > 0) {
             currentTurtleIndex = (currentTurtleIndex + 1) % turtles.length;
             selectedTurtle.set(turtles[currentTurtleIndex]);
-            loadMap(turtles[currentTurtleIndex].turtleID);
+            currentLocations.set(markerLocations[turtles[currentTurtleIndex].turtleID]);
         }
     }
 
@@ -136,22 +123,13 @@
         if (turtles.length > 0) {
             currentTurtleIndex = (currentTurtleIndex - 1 + turtles.length) % turtles.length;
             selectedTurtle.set(turtles[currentTurtleIndex]);
-            loadMap(turtles[currentTurtleIndex].turtleID);
+            currentLocations.set(markerLocations[turtles[currentTurtleIndex].turtleID]);
         }
     }
 
     function getTurtleDetails(turtle) {
-        window.location.href = `results/${turtle.turtleID}`;
+        // window.location.href = `results/${turtle.turtleID}`;
     }
-
-    let loading = true;
-
-    onMount(() => {
-        setTimeout(() => {
-            loading = false;
-        }, 1500); // 1.5 seconds
-    });
-
 </script>
 
 <head>
@@ -159,10 +137,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explore & Discover your results instantly | TRAC </title>
     <link rel="stylesheet" href="./src/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin=""/>
 </head>
 
 {#if loading}
@@ -224,7 +198,7 @@
 
             <div class="map__side">
                 <div class="map__panel">
-                    <div id="map"></div>
+                    <Map></Map>
                 </div>
 
                 <div class="map__description">

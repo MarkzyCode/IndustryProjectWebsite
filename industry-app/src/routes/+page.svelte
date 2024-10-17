@@ -6,13 +6,14 @@
     import * as exifr from 'exifr';
     import { onMount } from 'svelte';
     import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN } from '$env/static/public';
+    import { writable } from 'svelte/store';
     // import { page } from '$app/stores';
     // import { readable } from 'svelte/store';
 
     export let data;
     let { categories } = data;
 
-    let files;
+    let files = writable(null);
     let submitting = false;
     let images = [];
     let locationData = { lat: '', lon: '' };
@@ -20,10 +21,11 @@
     let orientation;
     let categoryValues = {};
     let comment;
+    let fileInput;
 
-    $: if (files) {
+    $: if ($files) {
         const reader = new FileReader();
-        const file = files[0];
+        const file = $files[0];
 
         reader.onload = async function(e) {
             const img = new Image();
@@ -92,7 +94,7 @@
                 }
             })
 
-            const imageResponse = await uploadImage(files[0]);
+            const imageResponse = await uploadImage($files[0]);
 
             const imageDataResponse = await fetch('data-api/rest/Image', {
                 method: 'POST',
@@ -100,7 +102,7 @@
                     userID: null, 
                     turtleID: null, 
                     secondaryImageID: null, 
-                    image: files[0].name,  
+                    image: $files[0].name,  
                     matchConfidence: null, 
                     longitude: locationData.lon, 
                     latitude: locationData.lat, 
@@ -136,6 +138,22 @@
     const textarea = event.target;
     textarea.style.height = '30px'; // Reset height
     textarea.style.height = `${textarea.scrollHeight}px`; // Adjust height based on content
+    }
+
+    // Utility function to prevent default browser behavior
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const droppedFiles = event.dataTransfer.files;
+        if (droppedFiles.length > 0) {
+            files.set(droppedFiles);
+            fileInput.files = droppedFiles;
+        }
     }
 
 </script>
@@ -174,19 +192,17 @@
                     <label for="picture" class="form__title">Upload Turtle Image <span class="asterisk__red">*</span></label>
                 </div>
                 
-                <div class="custom__upload">
-                    <input accept="image/png, image/jpeg" bind:files id="picture" name="picture" type="file" required class="file__input"/>
-
-                    {#if !files}  <!-- Check if files are not present -->
+                <div class="custom__upload" on:dragover={preventDefaults} on:dragenter={preventDefaults} on:dragleave={preventDefaults} on:drop={handleDrop}>
+                    {#if !$files}  <!-- Check if files are not present -->
                         <i class="fa-solid fa-arrow-up-from-bracket" id="upload__icon"></i>
                         <label for="picture" class="custom__upload__label">
                             Drop Items here or <span class="upload__keyword">browse files</span>
                         </label>
                     {/if}
 
-                    {#if files}
+                    {#if $files}
                         <div class="image__container">
-                            {#each Array.from(files) as file}
+                            {#each Array.from($files) as file}
                                 <img class="custom__upload__image" src={URL.createObjectURL(file)} alt="wilflife-input">
                             {/each}
                         </div>
@@ -196,7 +212,7 @@
                 <div class="under__upload">
                     <label for="file-size" class="file__size">up to 25mb</label>
                     <p class="movelower__dot">&#x2022;</p>
-                    <input accept="image/png, image/jpeg" bind:files id="picture" name="picture" type="file" required class="movelower__input"/>
+                    <input accept="image/png, image/jpeg" bind:files={$files} bind:this={fileInput} id="picture" name="picture" type="file" required class="movelower__input"/>
                 </div>
                 
                 <ol>
