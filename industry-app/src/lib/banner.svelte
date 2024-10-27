@@ -67,11 +67,11 @@
       {#if showText}
         <h1 class="navbar__menulabel {!showText ? 'fade-out' : ''}">Menu</h1>
       {/if}
-      <div class="navbar__icon {isOpen ? 'open' : ''}" on:click={toggleMenu}>
+      <button class="navbar__icon {isOpen ? 'open' : ''}" on:click={toggleMenu}>
           <span></span>
           <span></span>
           <span></span>
-      </div>
+      </button>
 
       <div class="navbar__dropdown {isOpen ? 'open' : ''}" style:visibility={showDropdown ? 'visible' : 'hidden'}>
           <a href="/"><i class="fa-solid fa-house"></i>Home Page</a>
