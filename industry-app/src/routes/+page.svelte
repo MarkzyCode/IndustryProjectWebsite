@@ -196,7 +196,9 @@
                     <label for="picture" class="form__title">Upload Turtle Image <span class="asterisk__red">*</span></label>
                 </div>
                 
-                <div class="custom__upload" on:dragover={preventDefaults} on:dragenter={preventDefaults} on:dragleave={preventDefaults} on:drop={handleDrop}>
+                <div class="custom__upload" role="region" aria-label="File Upload Area" 
+                aria-describedby="file-upload-instructions" on:dragover={preventDefaults} on:dragenter={preventDefaults} on:dragleave={preventDefaults} on:drop={handleDrop}>
+                    
                     {#if !$files}  <!-- Check if files are not present -->
                         <i class="fa-solid fa-arrow-up-from-bracket" id="upload__icon"></i>
                         <label for="picture" class="custom__upload__label">

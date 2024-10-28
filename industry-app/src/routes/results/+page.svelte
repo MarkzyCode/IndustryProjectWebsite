@@ -199,13 +199,15 @@
 
         turtles = updatedResponse;
         selectedTurtle.set(turtles[currentTurtleIndex]);
-        loading = false;
         await tick();
         currentLocations.set(markerLocations[turtles[currentTurtleIndex].turtleID]);
     }
 
     onMount(() => {
         LoadTurtles();
+        setTimeout(() => {
+            loading = false;
+        }, 1500);
     })
 
     function nextTurtle() {
@@ -227,6 +229,13 @@
     function getTurtleDetails(turtle) {
         // window.location.href = `results/${turtle.turtleID}`;
     }
+
+    function autoResize(event) {
+    const textarea = event.target;
+    textarea.style.height = '30px'; // Reset height
+    textarea.style.height = `${textarea.scrollHeight}px`; // Adjust height based on content
+    }
+
 </script>
 
 <head>
@@ -286,7 +295,7 @@
                         <li>
                             <div class="input__with__placeholders--secondary">
                                 <label for="Comment" class="form__placeholder">Comment : </label>
-                                <textarea class="input__style" type="text" id="Com" name="Com" value="{$selectedTurtle.comment}" readonly placeholder="[No Value Found]"></textarea>
+                                <textarea class="input__style" type="text" id="Com" name="Com" value="{$selectedTurtle.comment}" on:input={autoResize} readonly placeholder="[No Value Found]"></textarea>
                             </div>
                         </li>
                     </ol>
