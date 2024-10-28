@@ -14,6 +14,7 @@
     let selectedTurtle = writable({});
     let markerLocations = {};
     let loading = true;
+    let filename = '';
 
     // Will need to be converted to a POST request to an azure function/server side for added security
     async function getDetails(turtleID) {
@@ -143,13 +144,7 @@
     async function LoadTurtles() {
         let response = null;
         let result = null;
-        // Subscribe to the currentImage store
-        let filename = '';
-        const unsubscribe = currentImage.subscribe(value => {
-            filename = value; // Update the local variable whenever the image changes
-            console.log("Current Filename:", filename); // Log the filename for debugging
-        });
-
+        
         console.log(filename);
         try {
             const proxyUrl = 'http://localhost:3000/api/score';
@@ -201,13 +196,14 @@
         selectedTurtle.set(turtles[currentTurtleIndex]);
         await tick();
         currentLocations.set(markerLocations[turtles[currentTurtleIndex].turtleID]);
+        loading = false;
     }
 
     onMount(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        filename = urlParams.get('filename');
+        console.log("Filename from query parameter:", filename);
         LoadTurtles();
-        setTimeout(() => {
-            loading = false;
-        }, 1500);
     })
 
     function nextTurtle() {

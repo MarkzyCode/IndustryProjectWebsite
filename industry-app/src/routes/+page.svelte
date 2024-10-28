@@ -63,6 +63,7 @@
     // Will need to be converted to a POST request to an azure function for added security
     async function uploadImage(file) {
         const url = `${PUBLIC_BLOB_URL}${file.name}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the front end
+
         const response = await fetch(url, {
             method: 'PUT',
             headers: {
@@ -72,10 +73,6 @@
             body: file
         });
     };
-
-    function setStore(){
-        currentImage.set("ID_20MTQNWG.JPG");
-    }
 
     async function submitData() {
         try {
@@ -123,7 +120,7 @@
             }
 
             console.log("uploaded");
-            window.location.href = '/results';
+            window.location.href = `/results?filename=${$files[0].name}`;
         } catch (error) {
             console.error('Error submitting data:', error);
         }
@@ -131,7 +128,7 @@
 
     function onSubmit(event) {
         event.preventDefault();  // Prevent form from doing its default submission
-        setStore();
+
         if (!submitting) {
             submitting = true;
             submitData();
@@ -170,106 +167,110 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 
-<body>
-    <div>
-        <Banner></Banner>
-    </div>
-    
-    <div class="container--center">
-        <div class="container__title">
-            <span data-text="Turtle Recognition,"></span>
-            <span data-text="Awareness"></span>
-            <span data-text="and Conservation"></span>
+{#if submitting}
+    <div class="loading__spinner"></div>
+{:else}
+    <body>
+        <div>
+            <Banner></Banner>
         </div>
-
-        <h1 class="container__subheading">Easily identify and <b class="bold1">track turtles with cutting-edge AI technology</b>. 
-            Simply upload your file below to get started!</h1> 
-
-    </div>
-
-    
-        <div class="form--allignment">
-            <form id="photo" on:submit={onSubmit}>
         
-                <div class="form__header">
-                    <i class="fa-solid fa-cloud-arrow-up" id="cloud"></i>
-                    <label for="picture" class="form__title">Upload Turtle Image <span class="asterisk__red">*</span></label>
-                </div>
-                
-                <div class="custom__upload" role="region" aria-label="File Upload Area" 
-                aria-describedby="file-upload-instructions" on:dragover={preventDefaults} on:dragenter={preventDefaults} on:dragleave={preventDefaults} on:drop={handleDrop}>
-                    
-                    {#if !$files}  <!-- Check if files are not present -->
-                        <i class="fa-solid fa-arrow-up-from-bracket" id="upload__icon"></i>
-                        <label for="picture" class="custom__upload__label">
-                            Drop Items here or <span class="upload__keyword">browse files</span>
-                        </label>
-                    {/if}
+        <div class="container--center">
+            <div class="container__title">
+                <span data-text="Turtle Recognition,"></span>
+                <span data-text="Awareness"></span>
+                <span data-text="and Conservation"></span>
+            </div>
 
-                    {#if $files}
-                        <div class="image__container">
-                            {#each Array.from($files) as file}
-                                <img class="custom__upload__image" src={URL.createObjectURL(file)} alt="wilflife-input">
-                            {/each}
-                        </div>
-                    {/if}
-                </div> 
+            <h1 class="container__subheading">Easily identify and <b class="bold1">track turtles with cutting-edge AI technology</b>. 
+                Simply upload your file below to get started!</h1> 
 
-                <div class="under__upload">
-                    <label for="file-size" class="file__size">up to 25mb</label>
-                    <p class="movelower__dot">&#x2022;</p>
-                    <input accept="image/png, image/jpeg" bind:files={$files} bind:this={fileInput} id="picture" name="picture" type="file" required class="movelower__input"/>
-                </div>
-                
-                <ol>
-                    <li>
-                        <div class="form__input__container--primary">
-                            <input class="input__style" type="text" id="Lat" name="Lat" bind:value={locationData.lat} placeholder="">
-                            <label for="Lat" class="form__placeholder">Latitude: </label> 
-                        </div>
-                    </li>
-                    <li>
-                        <div class="form__input__container--primary">
-                            <input class="input__style" type="text" id="Lon" name="Lon" bind:value={locationData.lon} placeholder="">
-                            <label for="Lat" class="form__placeholder">Longitude: </label>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="form__input__container--primary">
-                            <input class="input__style" type="date" id="Cap" name="Cap" bind:value={capturedDate} required placeholder="">
-                            <label for="Cap" class="form__placeholder">Captured Date: </label>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="input__with__placeholders--secondary">
-                            <label for="Ori" class="form__placeholder">Orientation: </label>
-                            <input class="input__style" type="text" id="Ori" name="Ori" bind:value={orientation} required placeholder="Top, Left, or Right">
-                        </div>
-                    </li>
-                    {#if categories}
-                        {#each categories as category}
-                            <li>
-                                <div class="input__with__placeholders--secondary">   
-                                    <label for="{category.categoryID}" class="form__placeholder">{category.category}: </label>
-                                    <input class="input__style" type="text" id="{category.categoryID}" bind:value={categoryValues[category.categoryID]} name={category.category} placeholder="{category.description}">
-                                </div>
-                            </li>
-                        {/each}
-                    {/if}
-                    <li>
-                        <div class="input__with__placeholders--secondary">
-                            <label for="Com" class="form__placeholder">Comment: </label>
-                            <textarea class="input__style" id="Com" bind:value={comment} on:input={autoResize} name="Com" placeholder="Provide details about the subject..."></textarea>
-                        </div>
-                    </li>
-                </ol>
-                <div class="button__block">
-                    <button type="submit" class="form__button" disabled={submitting}>Upload</button>
-                </div>
-                
-            </form>
         </div>
-    
-    <Footer></Footer>
 
-</body>
+        
+            <div class="form--allignment">
+                <form id="photo" on:submit={onSubmit}>
+            
+                    <div class="form__header">
+                        <i class="fa-solid fa-cloud-arrow-up" id="cloud"></i>
+                        <label for="picture" class="form__title">Upload Turtle Image <span class="asterisk__red">*</span></label>
+                    </div>
+                    
+                    <div class="custom__upload" role="region" aria-label="File Upload Area" 
+                    aria-describedby="file-upload-instructions" on:dragover={preventDefaults} on:dragenter={preventDefaults} on:dragleave={preventDefaults} on:drop={handleDrop}>
+                        
+                        {#if !$files}  <!-- Check if files are not present -->
+                            <i class="fa-solid fa-arrow-up-from-bracket" id="upload__icon"></i>
+                            <label for="picture" class="custom__upload__label">
+                                Drop Items here or <span class="upload__keyword">browse files</span>
+                            </label>
+                        {/if}
+
+                        {#if $files}
+                            <div class="image__container">
+                                {#each Array.from($files) as file}
+                                    <img class="custom__upload__image" src={URL.createObjectURL(file)} alt="wilflife-input">
+                                {/each}
+                            </div>
+                        {/if}
+                    </div> 
+
+                    <div class="under__upload">
+                        <label for="file-size" class="file__size">up to 25mb</label>
+                        <p class="movelower__dot">&#x2022;</p>
+                        <input accept="image/png, image/jpeg" bind:files={$files} bind:this={fileInput} id="picture" name="picture" type="file" required class="movelower__input"/>
+                    </div>
+                    
+                    <ol>
+                        <li>
+                            <div class="form__input__container--primary">
+                                <input class="input__style" type="text" id="Lat" name="Lat" bind:value={locationData.lat} placeholder="">
+                                <label for="Lat" class="form__placeholder">Latitude: </label> 
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form__input__container--primary">
+                                <input class="input__style" type="text" id="Lon" name="Lon" bind:value={locationData.lon} placeholder="">
+                                <label for="Lat" class="form__placeholder">Longitude: </label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form__input__container--primary">
+                                <input class="input__style" type="date" id="Cap" name="Cap" bind:value={capturedDate} required placeholder="">
+                                <label for="Cap" class="form__placeholder">Captured Date: </label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Ori" class="form__placeholder">Orientation: </label>
+                                <input class="input__style" type="text" id="Ori" name="Ori" bind:value={orientation} required placeholder="Top, Left, or Right">
+                            </div>
+                        </li>
+                        {#if categories}
+                            {#each categories as category}
+                                <li>
+                                    <div class="input__with__placeholders--secondary">   
+                                        <label for="{category.categoryID}" class="form__placeholder">{category.category}: </label>
+                                        <input class="input__style" type="text" id="{category.categoryID}" bind:value={categoryValues[category.categoryID]} name={category.category} placeholder="{category.description}">
+                                    </div>
+                                </li>
+                            {/each}
+                        {/if}
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Com" class="form__placeholder">Comment: </label>
+                                <textarea class="input__style" id="Com" bind:value={comment} on:input={autoResize} name="Com" placeholder="Provide details about the subject..."></textarea>
+                            </div>
+                        </li>
+                    </ol>
+                    <div class="button__block">
+                        <button type="submit" class="form__button" disabled={submitting}>Upload</button>
+                    </div>
+                    
+                </form>
+            </div>
+        
+        <Footer></Footer>
+
+    </body>
+{/if}
