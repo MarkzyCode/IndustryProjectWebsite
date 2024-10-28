@@ -7,9 +7,6 @@
     import { onMount } from 'svelte';
     import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN } from '$env/static/public';
     import { writable } from 'svelte/store';
-    import { currentImage } from '$lib/stores';
-    // import { page } from '$app/stores';
-    // import { readable } from 'svelte/store';
 
     export let data;
     let { categories } = data;

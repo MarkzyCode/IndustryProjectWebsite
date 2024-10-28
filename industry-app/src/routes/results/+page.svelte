@@ -6,7 +6,7 @@
     import { onMount, tick } from "svelte";
     import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN, PUBLIC_BLOB_URL2} from '$env/static/public';
     import { writable } from 'svelte/store';
-    import { currentLocations, currentImage } from '$lib/stores';
+    import { currentLocations } from '$lib/stores';
     import Map from "$lib/map.svelte";
 
     let currentTurtleIndex = 0;
