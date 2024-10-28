@@ -4,9 +4,9 @@
     import Banner from "$lib/banner.svelte";
     import Footer from "$lib/footer.svelte";
     import { onMount, tick } from "svelte";
-    import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN } from '$env/static/public';
+    import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN, PUBLIC_BLOB_URL2} from '$env/static/public';
     import { writable } from 'svelte/store';
-    import { currentLocations } from '$lib/stores';
+    import { currentLocations, currentImage } from '$lib/stores';
     import Map from "$lib/map.svelte";
 
     let currentTurtleIndex = 0;
@@ -18,9 +18,12 @@
     // Will need to be converted to a POST request to an azure function/server side for added security
     async function getDetails(turtleID) {
         try {
-            const imageDataResponse = await fetch(`data-api/rest/Image`)
+            const imageDataResponse = await fetch(`data-api/rest/Image?$filter=turtleID eq ${turtleID}`);
             let data = await imageDataResponse.json();
-
+            if (!imageDataResponse.ok) {
+                throw new Error(`Failed to fetch image data: ${imageDataResponse.statusText}`);
+            }
+            console.log(data);
             const turtleData = data.value.find(turtle => turtle.turtleID === turtleID);
             if (!turtleData) {
                 console.log(`No image found for turtleID ${turtleID}`);
@@ -34,15 +37,16 @@
                 // markerLocations[location.turtleID].push([location.latitude, location.longitude])
             // });
 
-            markerLocations[turtleData.turtleID].push([turtleData.latitude, turtleData.longitude])
-            const fileName = turtleData.image;
-            const Long = turtleData.longitude;
-            const Lat = turtleData.latitude;
+            const fileName = `${turtleData.secondaryImageID}.JPG`;
+            console.log(fileName);
+            const Long = 39.971043333333334;
+            const Lat = -3.388123333333333;
             const Date = turtleData.captured;
             const Orientation = turtleData.orientation;
             const Comment = turtleData.comment;
+            markerLocations[turtleData.turtleID].push([Long, Lat])
 
-            const url = `${PUBLIC_BLOB_URL}${fileName}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the front end
+            const url = `${PUBLIC_BLOB_URL2}${fileName}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the front end
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -50,10 +54,13 @@
                     'x-ms-blob-type': 'BlockBlob', // Required header for Azure Blob Storage
                 }
             });
+            if (!response.ok) {
+                throw new Error(`Failed to fetch image: ${response.statusText}`);
+            }
 
             const imageBlob = await response.blob();
             const imageURL = URL.createObjectURL(imageBlob);
-
+            console.log(imageURL);
             const returnResponse = {
                 imageURL: imageURL,
                 longitude: Long,
@@ -70,23 +77,113 @@
         }
     };
 
+    async function fetchTurtleIDs(result) {
+        // Create an array to hold promises for each fetch request
+        const turtleIDs = []; // Initialize an array to hold the turtle IDs
+        try {
+            // Fetch all class indices from the API
+            const imageDataResponse = await fetch(`data-api/rest/classIndices`);
+            const classData = await imageDataResponse.json();
+
+            // Check if class data is returned and handle it accordingly
+            if (!classData || !classData.value) {
+                console.error("No class data found.");
+                return turtleIDs; // Return the empty array
+            }
+
+            // Fetch all turtle data at once
+            const turtleResponse = await fetch(`data-api/rest/turtles`);
+            const turtleData = await turtleResponse.json();
+
+            // Check if turtle data is returned and handle it accordingly
+            if (!turtleData || !turtleData.value) {
+                console.error("No turtle data found.");
+                return turtleIDs; // Return the empty array
+            }
+
+            // Loop through prediction values
+            for (let i = 1; i <= 5; i++) {
+                const predictionValue = result[`prediction${i}`];
+
+                // Find the matching entry for the current prediction
+                const matchingEntry = classData.value.find(entry => entry.value === predictionValue); // Adjust 'value' to your actual field name
+
+                if (matchingEntry) {
+                    const secondaryTurtleID = matchingEntry.id; // Adjust property names as needed
+                    console.log(`Matching ID for prediction${i}: ${secondaryTurtleID}`);
+
+                    // Filter the turtle data for matching secondaryTurtleID
+                    const matchedTurtles = turtleData.value.filter(turtle => turtle.secondaryTurtleID === secondaryTurtleID);
+
+                    // Add matched turtleIDs to the results
+                    matchedTurtles.forEach(turtle => {
+                        turtleIDs.push(turtle.turtleID); // Collect turtle IDs in the array
+                        console.log(`TurtleID for secondaryTurtleID ${secondaryTurtleID}: ${turtle.turtleID}`);
+                    });
+
+                    // If no turtles were found for this secondaryTurtleID
+                    if (matchedTurtles.length === 0) {
+                        console.log(`No turtles found for secondaryTurtleID ${secondaryTurtleID}`);
+                    }
+                } else {
+                    console.log(`No entry found for prediction${i} value ${predictionValue}`);
+                }
+            }
+
+            // Return the array of turtle IDs
+            return turtleIDs; // Return the collected turtle IDs
+        } catch (error) {
+            console.log("Error fetching data from database:", error.message);
+            return turtleIDs; // Return the empty array in case of an error
+        }
+    }
+
+
     // Call AI API to get turtle data
     async function LoadTurtles() {
         let response = null;
-        // try {
-        //     response = await fetch('data-api/rest/turtles'); // Change this to the correct API endpoint
-        //     response = await response.json();
-        //     console.log(response.value);
+        let result = null;
+        // Subscribe to the currentImage store
+        let filename = '';
+        const unsubscribe = currentImage.subscribe(value => {
+            filename = value; // Update the local variable whenever the image changes
+            console.log("Current Filename:", filename); // Log the filename for debugging
+        });
 
-        //     turtles = response.value;
-        // } catch (error) {
-        //     console.error('Error fetching turtles:', error);
-        // }
-        
-        await setTimeout(10000); // change all this once AI API is ready
+        console.log(filename);
+        try {
+            const proxyUrl = 'http://localhost:3000/api/score';
+            const data = {"filename": filename}
+            
+            const response = await fetch(proxyUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error('Error calling endpoint');
+            }
+
+            result = await response.json();
+            result = JSON.parse(result)
+            console.log(result);
+            
+        } catch (error) {
+             console.error('Error fetching turtles:', error);
+        }
+
+        const turtleIDs = await fetchTurtleIDs(result);
+        console.log(turtleIDs);
+         // change all this once AI API is ready
         response = [
-            {turtleID: 404, matchConfidence: 0.9}, 
-            {turtleID: 405, matchConfidence: 0.8}, 
+            {turtleID: turtleIDs[0], matchConfidence: result.probability1},
+            {turtleID: turtleIDs[1], matchConfidence: result.probability2},
+            {turtleID: turtleIDs[2], matchConfidence: result.probability3},
+            {turtleID: turtleIDs[3], matchConfidence: result.probability4},
+            {turtleID: turtleIDs[4], matchConfidence: result.probability5}
         ];
 
         const updatedResponse = await Promise.all(response.map(async (turtle) => {

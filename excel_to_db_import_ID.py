@@ -8,7 +8,7 @@ def connect_to_azure_sql_database():
   database = 'Industry-Project-Database'
   username = 'TeamAdmin'
   password = 'P@ssw0rd'   
-  driver= '{ODBC Driver 18 for SQL Server}'
+  driver= '{ODBC Driver 17 for SQL Server}'
   
   connection_string = 'Driver='+driver+';Server=tcp:'+server+',1433;Database='+database+';Uid='+username+';PWD='+password+';Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
   connection = pyodbc.connect(connection_string)
@@ -86,8 +86,9 @@ def insert_s_imageID(identity_image_tuple, connection):
         connection.rollback()
 
 def main():
-    file_path = r"C:\Users\Patst\OneDrive\Documents\[1] University 2.0\2024 Sem 2\ICT342\excelScraping\extra_images.xlsx"
-    sheet_name = 'extra_images'
+    file_path = r"C:\Users\Dylan\Documents\ml\data\train.xlsx"
+    sheet_name = 'train'
+    connection = None  # Initialize to avoid UnboundLocalError if connection fails
 
     try:
         connection = connect_to_azure_sql_database()
@@ -102,7 +103,8 @@ def main():
     except Exception as e:
         print(f"Error: {e}")
     finally:
-        connection.close()
+        if connection:
+            connection.close()
 
 if __name__ == "__main__":
     main()    

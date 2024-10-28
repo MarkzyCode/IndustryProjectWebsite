@@ -7,6 +7,7 @@
     import { onMount } from 'svelte';
     import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN } from '$env/static/public';
     import { writable } from 'svelte/store';
+    import { currentImage } from '$lib/stores';
     // import { page } from '$app/stores';
     // import { readable } from 'svelte/store';
 
@@ -62,7 +63,6 @@
     // Will need to be converted to a POST request to an azure function for added security
     async function uploadImage(file) {
         const url = `${PUBLIC_BLOB_URL}${file.name}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the front end
-
         const response = await fetch(url, {
             method: 'PUT',
             headers: {
@@ -72,6 +72,10 @@
             body: file
         });
     };
+
+    function setStore(){
+        currentImage.set("ID_20MTQNWG.JPG");
+    }
 
     async function submitData() {
         try {
@@ -127,7 +131,7 @@
 
     function onSubmit(event) {
         event.preventDefault();  // Prevent form from doing its default submission
-
+        setStore();
         if (!submitting) {
             submitting = true;
             submitData();
@@ -218,13 +222,13 @@
                 <ol>
                     <li>
                         <div class="form__input__container--primary">
-                            <input class="input__style" type="text" id="Lat" name="Lat" bind:value={locationData.lat} required placeholder="">
+                            <input class="input__style" type="text" id="Lat" name="Lat" bind:value={locationData.lat} placeholder="">
                             <label for="Lat" class="form__placeholder">Latitude: </label> 
                         </div>
                     </li>
                     <li>
                         <div class="form__input__container--primary">
-                            <input class="input__style" type="text" id="Lon" name="Lon" bind:value={locationData.lon} required placeholder="">
+                            <input class="input__style" type="text" id="Lon" name="Lon" bind:value={locationData.lon} placeholder="">
                             <label for="Lat" class="form__placeholder">Longitude: </label>
                         </div>
                     </li>

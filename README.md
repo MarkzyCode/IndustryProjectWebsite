@@ -1,11 +1,9 @@
 # IndustryProjectWebsite
 
 download node.js
-
+cd industry-app
 npm install
 npm install -g @azure/static-web-apps-cli  
-
-cd industry-app
 
 npx swa start -- local dev
 npx swa build -- build app

@@ -56,6 +56,24 @@
           "role": "anonymous"
         }
       ]
+    },
+    "turtles": {
+      "source": "dbo.Turtle",
+      "permissions": [
+        {
+          "actions": ["read", "create"],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "classIndices": {
+      "source": "dbo.class_indices",
+      "permissions": [
+        {
+          "actions": ["read", "create"],
+          "role": "anonymous"
+        }
+      ]
     }
   }
 }
