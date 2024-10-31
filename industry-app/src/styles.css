@@ -243,6 +243,7 @@ h1 {
     height: 3rem;
     bottom: 0;
     left: 0;
+    padding: 30px;
 }
 
 /* =====================================
@@ -308,7 +309,7 @@ h1 {
     font-size: 1.5625rem;
     width: 40%;
     margin: 1.4rem;
-    padding-bottom: 3rem;
+    padding-bottom: 1rem;
 }
 
 .container__subheading {
@@ -433,7 +434,7 @@ h1 {
 
 .file__size {
     margin: 1.25rem 0.625rem 0rem;
-    width: 6.25rem;
+    width: 8rem;
     color: #5c5757;
 }
 
@@ -466,7 +467,7 @@ h1 {
     cursor: pointer;
     display: inline-block;
     font-family: Circular,-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
-    font-size: 16px;
+    font-size: clamp(12px, 16px);
     font-weight: 600;
     line-height: 20px;
     padding: 13px 23px;
@@ -520,6 +521,7 @@ h1 {
 	transition: all 0.5s ease-in-out;
     pointer-events: none;
 }
+
 .input__style { 
     border:0;
     border-bottom:1px solid #555;  
@@ -539,6 +541,7 @@ h1 {
     overflow-y: hidden; /* Hide scrollbar */
     line-height: 1.2em; /* Consistent line height */
 }
+
 .input__style:focus { 
     border:none;	
     outline:none;
@@ -611,7 +614,7 @@ ol {
     z-index: 1;
     width: 120px;
     height: 120px;
-    margin: -76px 0 0 -76px;
+    margin: -60px 0 0 -60px;
     border: 16px solid #f3f3f3;
     border-radius: 50%;
     border-top: 16px solid #3498db;
@@ -622,55 +625,6 @@ ol {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-/* =====================================
-   Section: MEDIA QUERIES FOR RESPONSIVE DESIGN
-   ===================================== */
-
-@media (max-width: 1100px) {
-    .container__title  {
-        font-size: 13vmin; /* Decrease font size for smaller screens */
-        margin-top: 6vh; /* Adjust margins */
-        margin-bottom: 4vh; /* Adjust margins */
-    }
-
-    .container__title  span {
-        font-size: 10vmin; /* Further reduce font size for spans */
-    }
-}
-
-@media (max-width: 850px) {
-    .container__title  {
-        font-size: 10vmin; /* Decrease font size for smaller screens */
-        margin-top: 5vh; /* Adjust margins */
-        margin-bottom: 3vh; /* Adjust margins */
-    }
-
-    .container__title  span {
-        font-size: 8vmin; /* Further reduce font size for spans */
-    }
-
-    .form--allignment {
-        margin: 20px;
-    }
-
-    .navbar__menulabel {
-        opacity: 0; /* Make the word fade out */
-        pointer-events: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .container__title  {
-        font-size: 8vmin; /* Further decrease font size */
-        margin-top: 4vh; /* Adjust margins */
-        margin-bottom: 2vh; /* Adjust margins */
-    }
-
-    .container__title  span {
-        font-size: 6vmin; /* Smaller font size for mobile */
-    }
 }
 
 /* Style for the whole scrollbar */
@@ -868,7 +822,9 @@ ol {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 10em;
+    height: 100vh;
+    width: 100%;
+    /* margin-top: 10em; */
 }
 
 .login-container h1 {
@@ -930,9 +886,155 @@ ol {
     color: #6ec3c4;
 }
 
+.back-button {
+    color: #6ec3c4;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1.5rem;
+    text-decoration: none;
+}
+
+.back-button:hover {
+    color: #fff;
+}
+
 .login-buttons {
     display: flex;
     gap: 2px;
 }
 
+.login-input:focus { 
+    border:none;	
+    outline:none;
+    border-bottom:1px solid #3b312f;	
+}
 
+/* =====================================
+   Section: MEDIA QUERIES FOR RESPONSIVE DESIGN
+   ===================================== */
+
+   @media (max-width: 1100px) {
+    .container__title  {
+        font-size: 13vmin; /* Decrease font size for smaller screens */
+        margin-top: 6vh; /* Adjust margins */
+        margin-bottom: 4vh; /* Adjust margins */
+    }
+
+    .container__title  span {
+        font-size: 10vmin; /* Further reduce font size for spans */
+    }
+}
+
+@media (max-width: 850px) {
+    .container__title  {
+        font-size: 10vmin; /* Decrease font size for smaller screens */
+        margin-top: 5vh; /* Adjust margins */
+        margin-bottom: 3vh; /* Adjust margins */
+    }
+
+    .container__title  span {
+        font-size: 8vmin; /* Further reduce font size for spans */
+    }
+
+    .form--allignment {
+        margin: 20px;
+    }
+}
+
+@media (max-width: 570px) {
+    .container__title  {
+        font-size: 9vmin; /* Further decrease font size */
+        margin-top: 4vh; /* Adjust margins */
+        margin-bottom: 2vh; /* Adjust margins */
+    }
+
+    .container__title  span {
+        font-size: 7vmin; /* Smaller font size for mobile */
+    }
+
+    .container__subheading {
+        font-size: 1.1rem; /* Decrease font size */
+        width: 80%; /* Adjust width */
+    }
+
+    .navbar__logo {
+        width: 5rem;
+        height: 5rem;
+    }
+
+    .navbar__projectname {
+        font-size: 1rem;
+    }
+
+    .navbar__dropdown {
+        width: 100%;
+    }
+
+    .navbar__icon {
+        width: 25px; 
+        height: 20px; 
+        margin-right: 20px; 
+    }
+
+    .navbar__icon span {
+        height: 3px; /* Adjust the height of the spans */
+    }
+
+    .navbar__icon span:nth-child(1) {
+        top: 0px;
+    }
+
+    .navbar__icon:not(.open):hover span:nth-child(1){
+        top: 0px;
+    }
+
+    .navbar__icon span:nth-child(2) {
+        top: 8px; 
+    } 
+
+    .navbar__icon:not(.open):hover span:nth-child(2){
+        top: 8px;
+    }
+
+    .navbar__icon span:nth-child(3) {
+        bottom: 0px; 
+    }
+
+    .navbar__icon:not(.open):hover span:nth-child(3){
+        bottom: 0px;
+    }
+
+    .navbar__icon.open span:nth-child(1) {
+        top: 8px;
+        width: 20px;
+        left: 2px;
+    }
+
+    .navbar__icon.open span:nth-child(2) {
+        top: 12px;
+        width: 15px; 
+        left: -1px;
+    }
+
+    .navbar__icon.open span:nth-child(3) {
+        top: 12px;
+        width: 15px; 
+        left: 10px;
+    }
+
+    .form__button {
+        width: 80%;
+    }
+
+    .navbar__menulabel {
+        display: none;
+    }
+
+    .login-container {
+        width: 100%; /* Adjust width for mobile screens */
+    }
+
+    .login-container h1 {
+        font-size: 3rem; /* Adjust font size for mobile screens */
+    }
+}

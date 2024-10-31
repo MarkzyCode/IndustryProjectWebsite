@@ -16,7 +16,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create an Account & save your progress | TRAC</title>
+    <title>Login or Create an Account | TRAC</title>
     <link rel="stylesheet" href="./src/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
@@ -28,24 +28,23 @@
         <h1>TRAC Application</h1>
         <div class="toggle-buttons">
             <button class={isLogin ? 'active' : ''} on:click={toggleForm}>
-                Login
+                Sign Up
             </button>
             <button class={!isLogin ? 'active' : ''} on:click={toggleForm}>
-                Sign Up
+                Login
             </button>
         </div>
     
         <div class="form-group">
-            <input type="email" id="email" bind:value={email} placeholder="Email Address" required />
+            <input class="login-input" type="email" id="email" bind:value={email} placeholder="Email Address" required />
         </div>
         <div class="form-group">
-            <input type="password" id="password" bind:value={password} placeholder="Password" required />
+            <input class="login-input" type="password" id="password" bind:value={password} placeholder="Password" required />
         </div>
         <div class="login-buttons">
-            <button class="submit-button" on:click={handleSubmit}>{isLogin ? 'LOG IN' : 'SIGN UP'}</button>
-            <a href="/" class="submit-button">HOME PAGE</a>
+            <button class="submit-button" on:click={handleSubmit}>{isLogin ? 'LOGIN' : 'SIGN UP'}</button>
         </div>
-        
+        <br>
+        <a href="/" class="back-button">Back</a>
     </div>
 </div>
-

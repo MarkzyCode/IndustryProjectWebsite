@@ -220,26 +220,26 @@
                     
                     <ol>
                         <li>
-                            <div class="form__input__container--primary">
-                                <input class="input__style" type="text" id="Lat" name="Lat" bind:value={locationData.lat} placeholder="">
-                                <label for="Lat" class="form__placeholder">Latitude: </label> 
-                            </div>
-                        </li>
-                        <li>
-                            <div class="form__input__container--primary">
-                                <input class="input__style" type="text" id="Lon" name="Lon" bind:value={locationData.lon} placeholder="">
-                                <label for="Lat" class="form__placeholder">Longitude: </label>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="form__input__container--primary">
-                                <input class="input__style" type="date" id="Cap" name="Cap" bind:value={capturedDate} required placeholder="">
-                                <label for="Cap" class="form__placeholder">Captured Date: </label>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Lat" class="form__placeholder">Latitude: <span class="asterisk__red">*</span></label> 
+                                <input class="input__style" type="text" id="Lat" name="Lat" bind:value={locationData.lat} required placeholder="Latitude of where turtle was found">
                             </div>
                         </li>
                         <li>
                             <div class="input__with__placeholders--secondary">
-                                <label for="Ori" class="form__placeholder">Orientation: </label>
+                                <label for="Lat" class="form__placeholder">Longitude:<span class="asterisk__red">*</span></label>
+                                <input class="input__style" type="text" id="Lon" name="Lon" bind:value={locationData.lon} required placeholder="Longitude of where turtle was found">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Cap" class="form__placeholder">Captured Date: <span class="asterisk__red">*</span></label>
+                                <input class="input__style" type="date" id="Cap" name="Cap" bind:value={capturedDate} required placeholder="">
+                            </div>
+                        </li>
+                        <li>
+                            <div class="input__with__placeholders--secondary">
+                                <label for="Ori" class="form__placeholder">Orientation: <span class="asterisk__red">*</span></label>
                                 <input class="input__style" type="text" id="Ori" name="Ori" bind:value={orientation} required placeholder="Top, Left, or Right">
                             </div>
                         </li>
@@ -256,7 +256,7 @@
                         <li>
                             <div class="input__with__placeholders--secondary">
                                 <label for="Com" class="form__placeholder">Comment: </label>
-                                <textarea class="input__style" id="Com" bind:value={comment} on:input={autoResize} name="Com" placeholder="Provide details about the subject..."></textarea>
+                                <textarea class="input__style" id="Com" bind:value={comment} on:input={autoResize} name="Com" placeholder="Provide details about the turtle"></textarea>
                             </div>
                         </li>
                     </ol>
