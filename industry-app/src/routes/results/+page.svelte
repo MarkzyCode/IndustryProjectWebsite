@@ -19,16 +19,18 @@
     // Will need to be converted to a POST request to an azure function/server side for added security
     async function getDetails(turtleID) {
         try {
-            const imageDataResponse = await fetch(`data-api/rest/Image?$filter=turtleID eq ${turtleID}`);
+            const imageDataResponse = await fetch(`data-api/rest/Image?$filter=turtleID eq ${turtleID}&$orderby=imageID desc`);
             let data = await imageDataResponse.json();
             if (!imageDataResponse.ok) {
                 throw new Error(`Failed to fetch image data: ${imageDataResponse.statusText}`);
             }
             console.log(data);
-            const turtleData = data.value.find(turtle => turtle.turtleID === turtleID);
-            if (!turtleData) {
-                console.log(`No image found for turtleID ${turtleID}`);
-            }
+            const turtleData = data.value[0];
+            console.log(turtleData);
+            // const turtleData = data.value.find(turtle => turtle.turtleID === turtleID);
+            // if (!turtleData) {
+            //     console.log(`No image found for turtleID ${turtleID}`);
+            // }
 
             if (!markerLocations[turtleData.turtleID]) {
                 markerLocations[turtleData.turtleID] = [];
@@ -40,12 +42,12 @@
 
             const fileName = `${turtleData.secondaryImageID}.JPG`;
             console.log(fileName);
-            const Long = 39.971043333333334;
-            const Lat = -3.388123333333333;
+            const Long = turtleData.longitude;
+            const Lat = turtleData.latitude;
             const Date = turtleData.captured;
             const Orientation = turtleData.orientation;
             const Comment = turtleData.comment;
-            markerLocations[turtleData.turtleID].push([Long, Lat])
+            markerLocations[turtleData.turtleID].push([Lat, Long])
 
             const url = `${PUBLIC_BLOB_URL2}${fileName}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the front end
 
@@ -146,39 +148,50 @@
         let result = null;
         
         console.log(filename);
-        try {
-            const proxyUrl = 'http://localhost:3000/api/score';
-            const data = {"filename": filename}
+
+        // change all this once AI API is ready
+
+        // try {
+        //     const proxyUrl = 'http://localhost:3000/api/score';
+        //     const data = {"filename": filename}
             
-            const response = await fetch(proxyUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
+        //     const response = await fetch(proxyUrl, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify(data)
+        //     });
 
-            if (!response.ok) {
-                throw new Error('Error calling endpoint');
-            }
+        //     if (!response.ok) {
+        //         throw new Error('Error calling endpoint');
+        //     }
 
-            result = await response.json();
-            result = JSON.parse(result)
-            console.log(result);
+        //     result = await response.json();
+        //     result = JSON.parse(result)
+        //     console.log(result);
             
-        } catch (error) {
-             console.error('Error fetching turtles:', error);
-        }
+        // } catch (error) {
+        //      console.error('Error fetching turtles:', error);
+        // }
 
-        const turtleIDs = await fetchTurtleIDs(result);
-        console.log(turtleIDs);
-         // change all this once AI API is ready
+        // const turtleIDs = await fetchTurtleIDs(result);
+        // console.log(turtleIDs);
+        
+        // response = [
+        //     {turtleID: turtleIDs[0], matchConfidence: result.probability1},
+        //     {turtleID: turtleIDs[1], matchConfidence: result.probability2},
+        //     {turtleID: turtleIDs[2], matchConfidence: result.probability3},
+        //     {turtleID: turtleIDs[3], matchConfidence: result.probability4},
+        //     {turtleID: turtleIDs[4], matchConfidence: result.probability5}
+        // ];
+
         response = [
-            {turtleID: turtleIDs[0], matchConfidence: result.probability1},
-            {turtleID: turtleIDs[1], matchConfidence: result.probability2},
-            {turtleID: turtleIDs[2], matchConfidence: result.probability3},
-            {turtleID: turtleIDs[3], matchConfidence: result.probability4},
-            {turtleID: turtleIDs[4], matchConfidence: result.probability5}
+            {turtleID: 406, matchConfidence: 0.46},
+            {turtleID: 407, matchConfidence: 0.33},
+            {turtleID: 409, matchConfidence: 0.29},
+            {turtleID: 410, matchConfidence: 0.24},
+            {turtleID: 411, matchConfidence: 0.21}
         ];
 
         const updatedResponse = await Promise.all(response.map(async (turtle) => {
@@ -304,7 +317,7 @@
                 </div>
 
                 <div class="map__description">
-                    <p class="map__title">Showing selected location: (location__name)</p>
+                    <p class="map__title">Showing selected location: </p>
                     <ol>
                         <li>
                             <div class="input__with__placeholders--secondary">

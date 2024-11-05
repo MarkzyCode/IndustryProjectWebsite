@@ -21,7 +21,8 @@
             }, 0);
 
             currentLocations.subscribe(value => {
-                map.setView(value[0], 4);
+                const isSmallScreen = window.matchMedia("(max-width: 768px)").matches;
+                const zoomLevel = isSmallScreen ? 7 : 4; // Adjust zoom level for smaller screens
 
                 map.eachLayer((layer) => {
                     if (layer instanceof L.Marker) {
@@ -32,6 +33,8 @@
                 value.forEach(location => {
                     L.marker(location).addTo(map);
                 });
+
+                map.setView(value[0], zoomLevel);
             });
         }
     });

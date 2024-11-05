@@ -222,13 +222,13 @@
                         <li>
                             <div class="input__with__placeholders--secondary">
                                 <label for="Lat" class="form__placeholder">Latitude: <span class="asterisk__red">*</span></label> 
-                                <input class="input__style" type="text" id="Lat" name="Lat" bind:value={locationData.lat} required placeholder="Latitude of where turtle was found">
+                                <input class="input__style" type="text" id="Lat" name="Lat" bind:value={locationData.lat} required placeholder="Latitude of where the turtle was found">
                             </div>
                         </li>
                         <li>
                             <div class="input__with__placeholders--secondary">
                                 <label for="Lat" class="form__placeholder">Longitude:<span class="asterisk__red">*</span></label>
-                                <input class="input__style" type="text" id="Lon" name="Lon" bind:value={locationData.lon} required placeholder="Longitude of where turtle was found">
+                                <input class="input__style" type="text" id="Lon" name="Lon" bind:value={locationData.lon} required placeholder="Longitude of where the turtle was found">
                             </div>
                         </li>
                         <li>
