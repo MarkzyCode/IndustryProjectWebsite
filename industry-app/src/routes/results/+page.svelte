@@ -9,6 +9,7 @@
     import { currentLocations } from '$lib/stores';
     import Map from "$lib/map.svelte";
 
+    // Global variables
     let currentTurtleIndex = 0;
     let turtles = {};
     let selectedTurtle = writable({});
@@ -16,8 +17,12 @@
     let loading = true;
     let filename = '';
 
-    // Will need to be converted to a POST request to an azure function/server side for added security
-    async function getDetails(turtleID) {
+    /**
+     * Function to get the details for a specific turtle
+     * @param {Number} turtleID - The turtle ID to get details for
+     * @returns {Object} - The turtle details
+     */
+    async function getDetails(turtleID) { // Will need to be converted to an azure function for added security
         try {
             const imageDataResponse = await fetch(`data-api/rest/Image?$filter=turtleID eq ${turtleID}&$orderby=imageID desc`);
             let data = await imageDataResponse.json();
@@ -27,10 +32,6 @@
             console.log(data);
             const turtleData = data.value[0];
             console.log(turtleData);
-            // const turtleData = data.value.find(turtle => turtle.turtleID === turtleID);
-            // if (!turtleData) {
-            //     console.log(`No image found for turtleID ${turtleID}`);
-            // }
 
             if (!markerLocations[turtleData.turtleID]) {
                 markerLocations[turtleData.turtleID] = [];
@@ -49,7 +50,7 @@
             const Comment = turtleData.comment;
             markerLocations[turtleData.turtleID].push([Lat, Long])
 
-            const url = `${PUBLIC_BLOB_URL2}${fileName}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the front end
+            const url = `${PUBLIC_BLOB_URL2}${fileName}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the frontend
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -80,6 +81,11 @@
         }
     };
 
+    /**
+     * Function to fetch turtle IDs based on the prediction values
+     * @param {Object} result - The result object from the AI API
+     * @returns {Array} - An array of turtle IDs
+     */
     async function fetchTurtleIDs(result) {
         // Create an array to hold promises for each fetch request
         const turtleIDs = []; // Initialize an array to hold the turtle IDs
@@ -141,8 +147,10 @@
         }
     }
 
-
-    // Call AI API to get turtle data
+    /**
+     * Function to call the AI API to get predictions based on the filename
+     * @returns {void}
+     */
     async function LoadTurtles() {
         let response = null;
         let result = null;
@@ -186,6 +194,7 @@
         //     {turtleID: turtleIDs[4], matchConfidence: result.probability5}
         // ];
 
+        // Sample response data with turtle IDs and match confidence
         response = [
             {turtleID: 406, matchConfidence: 0.46},
             {turtleID: 407, matchConfidence: 0.33},
@@ -194,6 +203,7 @@
             {turtleID: 411, matchConfidence: 0.21}
         ];
 
+        // Get details for each turtle in the response
         const updatedResponse = await Promise.all(response.map(async (turtle) => {
             let details = await getDetails(turtle.turtleID); 
             turtle.imageURL = details.imageURL;
@@ -205,13 +215,14 @@
             return turtle;
         }));
 
-        turtles = updatedResponse;
-        selectedTurtle.set(turtles[currentTurtleIndex]);
+        turtles = updatedResponse; // Update the turtles array with the detailed information
+        selectedTurtle.set(turtles[currentTurtleIndex]); // Set the selected turtle to the first one in the list
         await tick();
-        currentLocations.set(markerLocations[turtles[currentTurtleIndex].turtleID]);
-        loading = false;
+        currentLocations.set(markerLocations[turtles[currentTurtleIndex].turtleID]); // Update the current locations with the marker locations for the selected turtle
+        loading = false; // Set loading to false to indicate that data has been loaded
     }
 
+    // Grab filename from url and load the turtles on mount
     onMount(() => {
         const urlParams = new URLSearchParams(window.location.search);
         filename = urlParams.get('filename');
@@ -219,6 +230,10 @@
         LoadTurtles();
     })
 
+    /**
+     * Function to select the next turtle in the list
+     * @returns {void}
+     */
     function nextTurtle() {
         if (turtles.length > 0) {
             currentTurtleIndex = (currentTurtleIndex + 1) % turtles.length;
@@ -227,6 +242,10 @@
         }
     }
 
+    /**
+     * Function to select the previous turtle in the list
+     * @returns {void}
+     */
     function previousTurtle() {
         if (turtles.length > 0) {
             currentTurtleIndex = (currentTurtleIndex - 1 + turtles.length) % turtles.length;
@@ -235,14 +254,24 @@
         }
     }
 
+    /**
+     * Function to redirect to more details page for a specific turtle
+     * @param {Object} turtle - The turtle object to get details for
+     * @returns {void}
+     */
     function getTurtleDetails(turtle) {
-        // window.location.href = `results/${turtle.turtleID}`;
+        // window.location.href = `details/turtleid=${turtle.turtleID}`;
     }
 
+    /**
+     * Function to auto resize the text area based on content
+     * @param {Event} event - The input event
+     * @returns {void}
+     */
     function autoResize(event) {
-    const textarea = event.target;
-    textarea.style.height = '30px'; // Reset height
-    textarea.style.height = `${textarea.scrollHeight}px`; // Adjust height based on content
+        const textarea = event.target;
+        textarea.style.height = '30px'; // Reset height
+        textarea.style.height = `${textarea.scrollHeight}px`; // Adjust height based on content
     }
 
 </script>

@@ -454,7 +454,6 @@ h1 {
 .button__block {
     display: flex;
     justify-content: center;
-    /* margin-top: 20px; */
     clear: both;
 }
 
@@ -651,7 +650,6 @@ ol {
 .horizontal__block {
     display: flex;
     justify-content: center;
-    /* height: 100vh; */
 }
 
 .results__side, .map__side {
@@ -726,7 +724,6 @@ ol {
     flex-direction: column;
     gap: 10px;
     width: 90%;
-    /* min-width: 340px; */
 }
 
 .image__preview, .details__panel {
@@ -767,31 +764,15 @@ ol {
 @media (max-width: 1100px) {
     .horizontal__block {
         flex-direction: column; /* Stack items vertically */
-        /* height: auto; */
         justify-items: center;
         align-items: center;
     }
 
-    /* .details__panel {
-        min-width: 300px;
-    } */
-
     .results__side, .map__side {
         margin: 30px;
         flex: 1 1 300px; /* Each side will be at least 300px wide */
-        /* min-width: 23.75rem; */
         width: 70%;
     }
-
-    /* .next__button1{
-        left: 10%;
-        margin-left: 20px;
-    }
-
-    .next__button2{
-        right: 10%;
-        margin-right: 20px;
-    } */
 
 }
 
@@ -824,7 +805,6 @@ ol {
     justify-content: center;
     height: 100vh;
     width: 100%;
-    /* margin-top: 10em; */
 }
 
 .login-container h1 {
@@ -1047,7 +1027,6 @@ ol {
     }
 
     .results__side, .map__side {
-        /* margin-left: 0px; */
         flex: 1 1 300px; /* Each side will be at least 300px wide */
         width: 100%;
     }

@@ -1,12 +1,15 @@
 <script>
+    // Global variables
     let isLogin = true;
     let email = '';
     let password = '';
 
+    // Function to toggle the form
     const toggleForm = () => {
         isLogin = !isLogin;
     };
 
+    // Function to handle form submission
     const handleSubmit = () => {
         // Add logic for form submission here
         console.log(isLogin ? 'Logging in...' : 'Signing up...', { email, password });

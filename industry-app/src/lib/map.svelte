@@ -2,9 +2,11 @@
     import { onMount} from 'svelte';
     import { currentLocations } from '$lib/stores';
 
+    // Global variables
     let map;
     let L;
 
+    // On mount, load the leaflet library and create the map
     onMount(async () => {
         if (typeof window !== 'undefined') {
             const leaflet = await import('leaflet');
@@ -20,6 +22,7 @@
                 map.invalidateSize();
             }, 0);
 
+            // Subscribe to the currentLocations store to update the map when the locations change
             currentLocations.subscribe(value => {
                 const isSmallScreen = window.matchMedia("(max-width: 768px)").matches;
                 const zoomLevel = isSmallScreen ? 7 : 4; // Adjust zoom level for smaller screens

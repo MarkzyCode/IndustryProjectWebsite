@@ -1,9 +1,11 @@
 <link rel="stylesheet" type="text/css" href="./src/styles.css"/>
 
 <script>
+  // Global variables
   let isOpen = false;
   let showDropdown = false;
 
+  // Function to toggle the menu
   const toggleMenu = () => {
     if (!isOpen) {
       showDropdown = true; // Show the dropdown immediately
@@ -15,44 +17,6 @@
       }, 300); // Match the timeout to your CSS transition duration
     }
   };
-
-  // import { onMount } from 'svelte';
-
-  //   let isFading = false; // Track if fading is in progress
-  //   let showText = true; // Track visibility of the text
-
-  //   function checkWidth() {
-  //       if (window.innerWidth <= 850) {
-  //           // Start the fade-out process if the width is less than or equal to 800px
-  //           if (showText) {
-  //               isFading = true; // Trigger fading animation
-  //               setTimeout(() => {
-  //                   showText = false; // Hide the text after the fade-out transition
-  //               }, 1000); // Match this duration to your CSS transition duration
-  //           }
-  //       } else {
-  //           // Reset to show the text if width is greater than 800px
-  //           isFading = false;
-  //           showText = true;
-  //       }
-  //   }
-
-    // onMount(() => {
-    //     // Initial check when the component mounts
-    //     checkWidth();
-
-    //     // Set up the resize event listener
-    //     window.addEventListener('resize', checkWidth);
-
-    //     // Clean up the event listener on component destroy
-    //     return () => {
-    //         window.removeEventListener('resize', checkWidth);
-    //     };
-    // });
-
-    // if (typeof window !== 'undefined' && window.innerWidth <= 800) {
-    //     showText = false; // Hide the text immediately if the condition is met
-    // }
 
 </script>
 

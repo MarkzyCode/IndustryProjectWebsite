@@ -8,6 +8,7 @@
     import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN } from '$env/static/public';
     import { writable } from 'svelte/store';
 
+    // Global variables
     export let data;
     let { categories } = data;
 
@@ -21,6 +22,7 @@
     let comment;
     let fileInput;
 
+    // Reads the metadata from the uploaded image
     $: if ($files) {
         const reader = new FileReader();
         const file = $files[0];
@@ -57,8 +59,11 @@
         reader.readAsDataURL(file);
     }
 
-    // Will need to be converted to a POST request to an azure function for added security
-    async function uploadImage(file) {
+    /**
+     * Uploads an image to Azure Blob Storage
+     * @param {File} file - The image file to upload
+     */
+    async function uploadImage(file) { // Will need to be converted to an azure function for added security
         const url = `${PUBLIC_BLOB_URL}${file.name}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the front end
 
         const response = await fetch(url, {
@@ -71,6 +76,10 @@
         });
     };
 
+    /**
+     * Submits the form data to the server
+     * @returns {Promise<void>}
+     */
     async function submitData() {
         try {
             const promises = Object.keys(categoryValues).map(async category => {
@@ -123,6 +132,11 @@
         }
     }
 
+    /**
+     * Handles the form submission
+     * @param {Event} event - The form submission event
+     * @returns {void}
+     */
     function onSubmit(event) {
         event.preventDefault();  // Prevent form from doing its default submission
 
@@ -132,18 +146,32 @@
         }
     }
 
+    /**
+     * Function to auto resize the text area based on content
+     * @param {Event} event - The input event
+     * @returns {void}
+     */
     function autoResize(event) {
-    const textarea = event.target;
-    textarea.style.height = '30px'; // Reset height
-    textarea.style.height = `${textarea.scrollHeight}px`; // Adjust height based on content
+        const textarea = event.target;
+        textarea.style.height = '30px'; // Reset height
+        textarea.style.height = `${textarea.scrollHeight}px`; // Adjust height based on content
     }
-
-    // Utility function to prevent default browser behavior
+    
+    /**
+     * Prevents the default browser behavior for drag and drop events
+     * @param {DragEvent} e - The drag event
+     * @returns {void}
+     */
     function preventDefaults(e) {
         e.preventDefault();
         e.stopPropagation();
     }
 
+    /**
+     * Handles the drop event
+     * @param {DragEvent} event - The drop event
+     * @returns {void}
+     */
     function handleDrop(event) {
         event.preventDefault();
         event.stopPropagation();
