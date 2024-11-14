@@ -4,7 +4,7 @@
     import Banner from "$lib/banner.svelte";
     import Footer from "$lib/footer.svelte";
     import { onMount, tick } from "svelte";
-    import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN, PUBLIC_BLOB_URL2} from '$env/static/public';
+    import { PUBLIC_BLOB_URL, PUBLIC_BLOB_TOKEN} from '$env/static/public';
     import { writable } from 'svelte/store';
     import { currentLocations } from '$lib/stores';
     import Map from "$lib/map.svelte";
@@ -50,7 +50,7 @@
             const Comment = turtleData.comment;
             markerLocations[turtleData.turtleID].push([Lat, Long])
 
-            const url = `${PUBLIC_BLOB_URL2}${fileName}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the frontend
+            const url = `${PUBLIC_BLOB_URL}${fileName}${PUBLIC_BLOB_TOKEN}`; // Token and URL variables shouldn't be in the frontend
 
             const response = await fetch(url, {
                 method: 'GET',
